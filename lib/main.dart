@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
-        fontFamily: GoogleFonts.openSans().fontFamily,
+        fontFamily: GoogleFonts.poppins().fontFamily,
         appBarTheme:
             AppBarTheme(), //themse from anotehr class called using method of that class
       ), //setting primary forn from google fonts
