@@ -11,14 +11,14 @@ import '../widgets/themes.dart';
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'fancy-background-app.dart';
-import 'forgot-password.dart';
 
-class LoginPage extends StatefulWidget {
+class ForgotPasswordPage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPage();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+class _ForgotPasswordPage extends State<ForgotPasswordPage>
+    with TickerProviderStateMixin {
   bool changedButton = false;
 
   moveToHome(BuildContext context) async {
@@ -42,14 +42,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffB9EDDD),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Container(
+        alignment: Alignment.topCenter,
+        height: double.infinity,
         child: SafeArea(
           child: SingleChildScrollView(
             child: Form(
                 key: _formKey,
                 child: AnimateGradient(
-                  // controller: AnimationController(vsync: this),
+                  controller: AnimationController(vsync: this),
                   duration: Duration(seconds: 3),
                   primaryBegin: Alignment.centerLeft,
                   primaryEnd: Alignment.centerRight,
@@ -70,11 +73,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     child: Column(
                       children: [
                         Image.asset(
-                          "assets/images/doctors.png",
+                          "assets/images/forgot.png",
                           //fit: BoxFit.cover,
+                          height: 200,
                         ),
                         10.squareBox,
-                        "Welcome Back"
+                        "Forgot Password"
                             .text
                             .xl4
                             .color(MyThemes.textColor)
@@ -95,11 +99,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             children: [
                               Container(
                                 padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: Color.fromARGB(
-                                                51, 34, 26, 26)))),
                                 child: TextField(
                                   cursorColor: MyThemes.textColor,
                                   decoration: InputDecoration(
@@ -114,21 +113,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           TextStyle(color: Colors.grey[400])),
                                 ),
                               ),
-                              Container(
-                                padding: EdgeInsets.all(8.0),
-                                child: TextField(
-                                  cursorColor: MyThemes.textColor,
-                                  decoration: InputDecoration(
-                                      icon: Icon(
-                                        CupertinoIcons.lock_circle,
-                                        color: Colors.black,
-                                      ),
-                                      border: InputBorder.none,
-                                      hintText: "Enter Password",
-                                      hintStyle:
-                                          TextStyle(color: Colors.grey[400])),
-                                ),
-                              )
                             ],
                           ),
                         ),
@@ -149,80 +133,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               duration: Duration(seconds: 1),
                               child: Center(
                                 //can use wrap with center
-                                child: changedButton
-                                    ? Icon(Icons.done,
-                                        color: Colors.white) //if btn is clicked
-                                    : Text(
-                                        "Login",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ForgotPasswordPage(),
-                            ),
-                          ),
-                          child: "Forgot Password?"
-                              .text
-                              .color(Color.fromRGBO(143, 148, 251, 1))
-                              .medium
-                              .make(),
-                        ),
-
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            LineDivider(),
-                            "Or".text.lg.make(),
-                            LineDivider()
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SocialLoginButton(
-                          backgroundColor: MyThemes.googleButton,
-                          buttonType: SocialLoginButtonType.google,
-                          onPressed: () {},
-                          text: "Login With Google",
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            "Don't have an account?".text.medium.make(),
-                            "\t".text.make(),
-                            InkWell(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SignInPage(),
+                                child: Text(
+                                  "Next",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
                                 ),
                               ),
-                              child: "Sign Up"
-                                  .text
-                                  .color(Color.fromRGBO(143, 148, 251, 1))
-                                  .medium
-                                  .make(),
-                            )
-                          ],
+                            ),
+                          ),
                         ),
+
                         // Expanded(child: MyAnimation()),
                       ],
                     ),
@@ -230,7 +152,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 )),
           ),
         ),
-      ),
+      ).pOnly(top: 50),
     );
   }
 }

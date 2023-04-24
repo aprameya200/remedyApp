@@ -2,23 +2,22 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:remedy_app/pages/sign-up_page.dart';
+import 'package:remedy_app/pages/login_page.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 
 import '../widgets/themes.dart';
 import 'package:animate_gradient/animate_gradient.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'fancy-background-app.dart';
-import 'forgot-password.dart';
 
-class LoginPage extends StatefulWidget {
+import 'fancy-background-app.dart';
+
+class SignInPage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
   bool changedButton = false;
 
   moveToHome(BuildContext context) async {
@@ -42,6 +41,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xffB9EDDD),
       body: Container(
         child: SafeArea(
@@ -49,7 +49,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: Form(
                 key: _formKey,
                 child: AnimateGradient(
-                  // controller: AnimationController(vsync: this),
+                  controller: AnimationController(
+                      vsync: this, duration: Duration(days: 100)),
                   duration: Duration(seconds: 3),
                   primaryBegin: Alignment.centerLeft,
                   primaryEnd: Alignment.centerRight,
@@ -70,15 +71,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     child: Column(
                       children: [
                         Image.asset(
-                          "assets/images/doctors.png",
-                          //fit: BoxFit.cover,
+                          "assets/images/signup.png",
+                          height: 190,
                         ),
                         10.squareBox,
-                        "Welcome Back"
-                            .text
-                            .xl4
-                            .color(MyThemes.textColor)
-                            .make(),
+                        "Sign Up".text.xl4.color(MyThemes.textColor).make(),
                         20.squareBox,
                         Container(
                           padding: EdgeInsets.all(5),
@@ -103,13 +100,55 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 child: TextField(
                                   cursorColor: MyThemes.textColor,
                                   decoration: InputDecoration(
+                                      icon: Icon(
+                                        CupertinoIcons.profile_circled,
+                                        color: Colors.black,
+                                      ),
                                       border: InputBorder.none,
                                       focusColor: Colors.red,
+                                      hintText: "Username",
+                                      hintStyle:
+                                          TextStyle(color: Colors.grey[400])),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Color.fromARGB(
+                                                51, 34, 26, 26)))),
+                                child: TextField(
+                                  cursorColor: MyThemes.textColor,
+                                  decoration: InputDecoration(
                                       icon: Icon(
                                         CupertinoIcons.at,
                                         color: Colors.black,
                                       ),
-                                      hintText: "Enter Email",
+                                      border: InputBorder.none,
+                                      focusColor: Colors.red,
+                                      hintText: "Email",
+                                      hintStyle:
+                                          TextStyle(color: Colors.grey[400])),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Color.fromARGB(
+                                                51, 34, 26, 26)))),
+                                child: TextField(
+                                  cursorColor: MyThemes.textColor,
+                                  decoration: InputDecoration(
+                                      icon: Icon(
+                                        CupertinoIcons.lock_open,
+                                        color: Colors.black,
+                                      ),
+                                      border: InputBorder.none,
+                                      focusColor: Colors.red,
+                                      hintText: "Password",
                                       hintStyle:
                                           TextStyle(color: Colors.grey[400])),
                                 ),
@@ -120,11 +159,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   cursorColor: MyThemes.textColor,
                                   decoration: InputDecoration(
                                       icon: Icon(
-                                        CupertinoIcons.lock_circle,
+                                        CupertinoIcons.lock_shield,
                                         color: Colors.black,
                                       ),
                                       border: InputBorder.none,
-                                      hintText: "Enter Password",
+                                      focusColor: Colors.red,
+                                      hintText: "Confirm Password",
                                       hintStyle:
                                           TextStyle(color: Colors.grey[400])),
                                 ),
@@ -153,7 +193,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     ? Icon(Icons.done,
                                         color: Colors.white) //if btn is clicked
                                     : Text(
-                                        "Login",
+                                        "Sign Up",
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -163,23 +203,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ForgotPasswordPage(),
-                            ),
-                          ),
-                          child: "Forgot Password?"
-                              .text
-                              .color(Color.fromRGBO(143, 148, 251, 1))
-                              .medium
-                              .make(),
-                        ),
-
                         SizedBox(
                           height: 20,
                         ),
@@ -198,7 +221,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           backgroundColor: MyThemes.googleButton,
                           buttonType: SocialLoginButtonType.google,
                           onPressed: () {},
-                          text: "Login With Google",
+                          text: "Sign Up With Google",
                         ),
                         SizedBox(
                           height: 20,
@@ -206,16 +229,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            "Don't have an account?".text.medium.make(),
+                            "Already have an account?".text.medium.make(),
                             "\t".text.make(),
                             InkWell(
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SignInPage(),
+                                  builder: (context) => LoginPage(),
                                 ),
                               ),
-                              child: "Sign Up"
+                              child: "Login"
                                   .text
                                   .color(Color.fromRGBO(143, 148, 251, 1))
                                   .medium
