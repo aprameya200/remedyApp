@@ -2,6 +2,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/fancy-background-app.dart';
 import 'package:remedy_app/pages/login_page.dart';
+import 'package:remedy_app/pages/patient/patients_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
       routes: {
         //routes like laravel
         "/login": (context) =>
-            LoginPage(), //route has been changes to this page
+            PatientPage(), //route has been changes to this page
         // MyRoutes.homeRoute: (context) =>
         //     HomePage(), //routing using rpoute classes
         // MyRoutes.loginRoute: (context) => LoginPage(),

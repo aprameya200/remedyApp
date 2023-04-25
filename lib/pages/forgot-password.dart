@@ -144,7 +144,13 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
                             ),
                           ),
                         ),
-
+                        SizedBox(
+                          height: 20,
+                        ),
+                        "Don't worry. Please enter your email address associated with your account"
+                            .text
+                            .align(TextAlign.center)
+                            .make()
                         // Expanded(child: MyAnimation()),
                       ],
                     ),
