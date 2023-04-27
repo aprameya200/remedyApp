@@ -1,15 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_import
 
+import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:remedy_app/pages/sign-up_page.dart';
-import 'package:velocity_x/velocity_x.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/pages/patient/vitals.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
+import 'package:velocity_x/velocity_x.dart';
+
+import 'package:remedy_app/pages/sign-up_page.dart';
 
 import '../../widgets/themes.dart';
-import 'package:animate_gradient/animate_gradient.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 class PatientPage extends StatefulWidget {
   @override
@@ -31,6 +34,8 @@ class _PatientPage extends State<PatientPage> {
         child: Column(children: [
           PatientInitialInfo(),
           InfoAdditionButton(),
+          "Health".text.xl4.bold.make().pOnly(bottom: 12),
+          PatientVitalsInfo(),
         ]),
       ),
     );
@@ -108,8 +113,7 @@ class PatientInitialInfo extends StatelessWidget {
 class InfoAdditionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Row(children: [
+    return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       ElevatedButton(
           style: ButtonStyle(
             backgroundColor: MaterialStatePropertyAll(MyThemes.btnBox),
@@ -117,16 +121,34 @@ class InfoAdditionButton extends StatelessWidget {
           ),
           onPressed: () {},
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 CupertinoIcons.add,
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
               5.squareBox,
-              "Add Personal Information".text.black.bold.make()
+              "Add Personal Information".text.black.bold.make(),
             ],
           )).pOnly(left: 32, right: 32, top: 10, bottom: 10),
+    ]);
+  }
+}
+
+class PatientVitalsInfo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Row(
+              //top row
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [ShowBloodPressure(), ShowHeartRate()])
+          .pOnly(right: 10, left: 10, bottom: 20),
+      Row(
+              //bottom row
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [ShowBloodOxygen(), ShowTemperature()])
+          .pOnly(right: 10, left: 10, bottom: 20)
     ]);
   }
 }
