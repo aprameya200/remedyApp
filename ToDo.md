@@ -1,1 +1,3 @@
 -> validate login form
+-> add bottom navi bar
+-> add calendar for appointments

@@ -11,9 +11,23 @@ class MyThemes {
   static Color boxEdge = Color.fromARGB(255, 86, 201, 138);
   static Color btnBox = Color(0xff6DA9E4);
 
+  static Color calanderSelection = Color.fromARGB(106, 109, 168, 228);
+
   AppBarTheme currentTheme() {
     return AppBarTheme(
         backgroundColor: Colors.white,
+        elevation: 0.0,
+        iconTheme: IconThemeData(color: Colors.black),
+        titleTextStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontFamily: GoogleFonts.poppins().fontFamily,
+        ));
+  }
+
+  AppBarTheme searchTheme() {
+    return AppBarTheme(
+        backgroundColor: MyThemes.boxEdge,
         elevation: 0.0,
         iconTheme: IconThemeData(color: Colors.black),
         titleTextStyle: TextStyle(

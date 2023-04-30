@@ -2,6 +2,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_import
 
 import 'package:animate_gradient/animate_gradient.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,6 +13,10 @@ import 'package:velocity_x/velocity_x.dart';
 
 import 'package:remedy_app/pages/sign-up_page.dart';
 
+//Calander
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../../widgets/bottomBar.dart';
 import '../../widgets/themes.dart';
 
 class PatientPage extends StatefulWidget {
@@ -23,6 +28,7 @@ class _PatientPage extends State<PatientPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Example(),
       backgroundColor: MyThemes.boxEdge,
       appBar: AppBar(
         title: "Profile".text.xl3.black.make(),
@@ -31,12 +37,16 @@ class _PatientPage extends State<PatientPage> {
         centerTitle: true,
       ),
       body: Container(
-        child: Column(children: [
-          PatientInitialInfo(),
-          InfoAdditionButton(),
-          "Health".text.xl4.bold.make().pOnly(bottom: 12),
-          PatientVitalsInfo(),
-        ]),
+        child: SingleChildScrollView(
+          child: Column(children: [
+            PatientInitialInfo(),
+            InfoAdditionButton(),
+            "Health".text.xl4.bold.make().pOnly(bottom: 12),
+            PatientVitalsInfo(),
+            "Appointments".text.xl4.bold.make().pOnly(bottom: 12),
+            AppointmentCalander()
+          ]),
+        ),
       ),
     );
   }
@@ -116,7 +126,7 @@ class InfoAdditionButton extends StatelessWidget {
     return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(MyThemes.btnBox),
+            backgroundColor: MaterialStatePropertyAll(Color(0xffEEF2FF)),
             elevation: MaterialStateProperty.all(15),
           ),
           onPressed: () {},
@@ -150,5 +160,31 @@ class PatientVitalsInfo extends StatelessWidget {
               children: [ShowBloodOxygen(), ShowTemperature()])
           .pOnly(right: 10, left: 10, bottom: 20)
     ]);
+  }
+}
+
+class AppointmentCalander extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Color.fromARGB(171, 47, 43, 43),
+          blurRadius: 15.0, // soften the shadow
+          spreadRadius: 5.0, //extend the shadow
+          offset: Offset(
+            5.0, // Move to right 5  horizontally
+            5.0, // Move to bottom 5 Vertically
+          ),
+        )
+      ], color: Color(0xffEEF2FF), borderRadius: BorderRadius.circular(10)),
+      child: SfCalendar(
+        view: CalendarView.month,
+        headerStyle: CalendarHeaderStyle(textStyle: TextStyle(fontSize: 20)),
+        todayHighlightColor: Colors.black,
+        cellBorderColor: Colors.transparent,
+        selectionDecoration: BoxDecoration(color: MyThemes.calanderSelection),
+      ).p12(),
+    ).pOnly(top: 0, left: 35, right: 40, bottom: 35);
   }
 }
