@@ -13,10 +13,13 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 //Calander
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../../widgets/bottomBar.dart';
 import '../../widgets/themes.dart';
 
 class MessagePage extends StatefulWidget {
+  final dummy;
+
+  const MessagePage({super.key, required this.dummy});
+
   @override
   State<MessagePage> createState() => _MessagePageState();
 }
@@ -25,7 +28,7 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: Example(),
+        // bottomNavigationBar: Example(),
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: "Messages".text.xl3.black.make(),

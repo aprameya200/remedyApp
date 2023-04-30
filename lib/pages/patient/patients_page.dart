@@ -16,10 +16,12 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 //Calander
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../../widgets/bottomBar.dart';
 import '../../widgets/themes.dart';
 
 class PatientPage extends StatefulWidget {
+  final dummy;
+  const PatientPage({super.key, required this.dummy});
+
   @override
   State<PatientPage> createState() => _PatientPage();
 }
@@ -28,7 +30,7 @@ class _PatientPage extends State<PatientPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Example(),
+      // bottomNavigationBar: Example(),
       backgroundColor: MyThemes.boxEdge,
       appBar: AppBar(
         title: "Profile".text.xl3.black.make(),

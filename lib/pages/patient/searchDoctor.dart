@@ -4,8 +4,6 @@ import 'package:remedy_app/widgets/themes.dart';
 import 'package:search_page/search_page.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-import '../../widgets/bottomBar.dart';
-
 /// This is a very simple class, used to
 /// demo the `SearchPage` package
 class Person implements Comparable<Person> {
@@ -34,7 +32,7 @@ class SearchDoctorPage extends StatelessWidget {
     MyThemes search = new MyThemes();
 
     return Scaffold(
-      bottomNavigationBar: Example(),
+      // bottomNavigationBar: Example(),
       appBar: AppBar(
         title: "Search".text.xl3.black.make(),
         backgroundColor: Colors.white,

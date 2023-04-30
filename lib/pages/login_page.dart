@@ -10,7 +10,7 @@ import 'package:social_login_buttons/social_login_buttons.dart';
 import '../widgets/themes.dart';
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'fancy-background-app.dart';
+import 'patient_skeleton.dart';
 import 'forgot-password.dart';
 
 class LoginPage extends StatefulWidget {
