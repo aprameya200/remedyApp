@@ -3,11 +3,11 @@
 
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/pages/doctor/dashboard-elements.dart';
 import 'package:remedy_app/pages/patient/vitals.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -19,20 +19,20 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../widgets/themes.dart';
 
-class PatientPage extends StatefulWidget {
+class DoctorPage extends StatefulWidget {
   final dummy;
-  const PatientPage({super.key, required this.dummy});
+  const DoctorPage({super.key, required this.dummy});
 
   @override
-  State<PatientPage> createState() => _PatientPage();
+  State<DoctorPage> createState() => _DoctorPage();
 }
 
-class _PatientPage extends State<PatientPage> {
+class _DoctorPage extends State<DoctorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // bottomNavigationBar: Example(),
-      backgroundColor: MyThemes.boxEdge,
+      backgroundColor: MyThemes.btnBox,
       appBar: AppBar(
         title: "Profile".text.xl3.black.make(),
         backgroundColor: Colors.white,
@@ -42,12 +42,16 @@ class _PatientPage extends State<PatientPage> {
       body: Container(
         child: SingleChildScrollView(
           child: Column(children: [
-            PatientInitialInfo(),
+            DoctorInitialInfo(),
             InfoAdditionButton(),
-            "Health".text.xl4.bold.make().pOnly(bottom: 12),
-            PatientVitalsInfo(),
-            "Appointments".text.xl4.bold.make().pOnly(bottom: 12),
-            AppointmentCalander()
+            "Dashboard".text.xl4.bold.make().pOnly(bottom: 12),
+            DoctorDashboardInfo(),
+            AddReport(
+              addText: "Add Appomtment",
+            ),
+            20.squareBox,
+            "Your Calander".text.xl4.bold.make().pOnly(bottom: 12),
+            DoctorCalander()
           ]),
         ),
       ),
@@ -55,7 +59,7 @@ class _PatientPage extends State<PatientPage> {
   }
 }
 
-class PatientInitialInfo extends StatelessWidget {
+class DoctorInitialInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -82,23 +86,23 @@ class PatientInitialInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircleAvatar(
-            backgroundColor: MyThemes.boxEdge,
+            backgroundColor: MyThemes.btnBox,
             radius: 55,
             child: CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/images/CAPS.jpg'),
+              backgroundImage: AssetImage('assets/images/faker.jpg'),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              "Eren Yaeger".text.xl2.bold.make(),
+              "Levi Ackerman".text.xl2.bold.make(),
               "Male".text.xl.make(),
-              "22".text.xl.make(),
+              "27".text.xl.make(),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(MyThemes.boxEdge),
+                  backgroundColor: MaterialStatePropertyAll(MyThemes.btnBox),
                 ),
                 onPressed: null,
                 child: Row(
@@ -108,7 +112,7 @@ class PatientInitialInfo extends StatelessWidget {
                       color: Color.fromARGB(255, 254, 254, 254),
                     ),
                     5.squareBox,
-                    "Patient".text.white.bold.make()
+                    "Doctor".text.white.bold.make()
                   ],
                 ),
               )
@@ -142,50 +146,30 @@ class InfoAdditionButton extends StatelessWidget {
               5.squareBox,
               "Add Personal Information".text.black.bold.make(),
             ],
-          )),
-      20.squareBox,
-      ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Color(0xffEEF2FF)),
-            elevation: MaterialStateProperty.all(15),
-          ),
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                CupertinoIcons.arrow_right,
-                color: Color.fromARGB(255, 0, 0, 0),
-              ),
-              5.squareBox,
-              "Logout".text.black.bold.make(),
-            ],
-          )),
-    ]).pOnly(left: 20, right: 20, top: 10, bottom: 10);
+          )).pOnly(left: 32, right: 32, top: 10, bottom: 10),
+    ]);
   }
 }
 
-class PatientVitalsInfo extends StatelessWidget {
+class DoctorDashboardInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
       Row(
               //top row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [ShowBloodPressure(), ShowHeartRate()])
+              children: [ShowNewPatients(), ShowConsultations()])
           .pOnly(right: 10, left: 10, bottom: 20),
       Row(
               //bottom row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [ShowBloodOxygen(), ShowTemperature()])
+              children: [ShowInProgress(), ShowReports()])
           .pOnly(right: 10, left: 10, bottom: 20)
     ]);
   }
 }
 
-class AppointmentCalander extends StatelessWidget {
+class DoctorCalander extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

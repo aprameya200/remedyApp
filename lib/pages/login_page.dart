@@ -1,19 +1,34 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: prefer_const_constructors
 
+import 'package:animate_gradient/animate_gradient.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:remedy_app/pages/sign-up_page.dart';
-import 'package:velocity_x/velocity_x.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:social_login_buttons/social_login_buttons.dart';
-
-import '../widgets/themes.dart';
-import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'patient_skeleton.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/widgets/anime-gradient.dart';
+import 'package:social_login_buttons/social_login_buttons.dart';
+import 'package:velocity_x/velocity_x.dart';
+
+import 'package:remedy_app/pages/sign-up_page.dart';
+
+import '../main.dart';
+import '../widgets/themes.dart';
+import '../widgets/utils.dart';
 import 'forgot-password.dart';
+import 'patient_skeleton.dart';
 
 class LoginPage extends StatefulWidget {
+  final VoidCallback onClickedSignUp;
+  const LoginPage({
+    Key? key,
+    required this.onClickedSignUp,
+  }) : super(key: key);
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -21,20 +36,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool changedButton = false;
 
-  moveToHome(BuildContext context) async {
-    //loading animation
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        changedButton = true;
-      });
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-      await Future.delayed(Duration(seconds: 1));
-      // await Navigator.pushNamed(context, MyRoutes.homeRoute);
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
 
-      setState(() {
-        changedButton = false;
-      });
-    }
+    super.dispose();
   }
 
   @override
@@ -49,22 +59,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: Form(
                 key: _formKey,
                 child: AnimateGradient(
-                  // controller: AnimationController(vsync: this),
+                  // controller: AnimationController(vsync: crea()),
                   duration: Duration(seconds: 3),
                   primaryBegin: Alignment.centerLeft,
                   primaryEnd: Alignment.centerRight,
                   secondaryBegin: Alignment.bottomLeft,
                   secondaryEnd: Alignment.bottomCenter,
-                  primaryColors: const [
-                    Color.fromARGB(255, 255, 255, 255),
-                    Color(0xff61F2F5),
-                    Colors.white,
-                  ],
-                  secondaryColors: const [
-                    Colors.white,
-                    Color(0xffB9EDDD),
-                    Color.fromARGB(255, 86, 201, 138),
-                  ],
+                  primaryColors: AnimeGradient.primary_color,
+                  secondaryColors: AnimeGradient.secondary_color,
                   child: Padding(
                     padding: EdgeInsets.all(30.0),
                     child: Column(
@@ -100,13 +102,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         bottom: BorderSide(
                                             color: Color.fromARGB(
                                                 51, 34, 26, 26)))),
-                                child: TextField(
+                                child: TextFormField(
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: (email) => email != null &&
+                                          !EmailValidator.validate(email)
+                                      ? "Enter a valid email"
+                                      : null,
+                                  controller: emailController,
                                   cursorColor: MyThemes.textColor,
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
                                       focusColor: Colors.red,
                                       icon: Icon(
-                                        CupertinoIcons.at,
+                                        CupertinoIcons.mail,
                                         color: Colors.black,
                                       ),
                                       hintText: "Enter Email",
@@ -116,7 +125,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                               Container(
                                 padding: EdgeInsets.all(8.0),
-                                child: TextField(
+                                child: TextFormField(
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: (password) =>
+                                      password != null && password.length < 6
+                                          ? "Enter a minimum of 6 characters"
+                                          : null,
+                                  obscureText: true,
+                                  controller: passwordController,
                                   cursorColor: MyThemes.textColor,
                                   decoration: InputDecoration(
                                       icon: Icon(
@@ -141,7 +158,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           borderRadius:
                               BorderRadius.circular(changedButton ? 50 : 8),
                           child: InkWell(
-                            onTap: () => moveToHome(context),
+                            onTap: () => signIn(),
                             child: AnimatedContainer(
                               width: changedButton ? 50 : 220,
                               height: 50,
@@ -179,7 +196,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               .medium
                               .make(),
                         ),
-
                         SizedBox(
                           height: 20,
                         ),
@@ -209,12 +225,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             "Don't have an account?".text.medium.make(),
                             "\t".text.make(),
                             InkWell(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SignInPage(),
-                                ),
-                              ),
+                              onTap: widget.onClickedSignUp,
                               child: "Sign Up"
                                   .text
                                   .color(Color.fromRGBO(143, 148, 251, 1))
@@ -232,6 +243,38 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future signIn() async {
+    final db = FirebaseFirestore.instance;
+
+    final isValid = _formKey.currentState!.validate();
+
+    if (!isValid) return;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(
+              child: CircularProgressIndicator(),
+            ));
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+    } on FirebaseAuthException catch (e) {
+      Utils.showSnackBar("Please enter correct login credentials");
+    }
+    // email: "user123@gmail.com",
+    // password: "user@123");
+
+    //adds data
+    // await FirebaseFirestore.instance
+    //     .collection("user")
+    //     .doc("new user")
+    //     .set({"name": "mymmy"});
+
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
 

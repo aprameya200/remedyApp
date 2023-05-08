@@ -1,15 +1,22 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:remedy_app/pages/login_page.dart';
 import 'package:remedy_app/pages/sign-up_page.dart';
+import 'package:remedy_app/widgets/anime-gradient.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 
+import '../main.dart';
 import '../widgets/themes.dart';
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import '../widgets/utils.dart';
 import 'patient_skeleton.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -20,6 +27,8 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPage extends State<ForgotPasswordPage>
     with TickerProviderStateMixin {
   bool changedButton = false;
+
+  final emailController = TextEditingController();
 
   moveToHome(BuildContext context) async {
     //loading animation
@@ -58,16 +67,8 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
                   primaryEnd: Alignment.centerRight,
                   secondaryBegin: Alignment.bottomLeft,
                   secondaryEnd: Alignment.bottomCenter,
-                  primaryColors: const [
-                    Color.fromARGB(255, 255, 255, 255),
-                    Color(0xff61F2F5),
-                    Colors.white,
-                  ],
-                  secondaryColors: const [
-                    Colors.white,
-                    Color(0xffB9EDDD),
-                    Color.fromARGB(255, 86, 201, 138),
-                  ],
+                  primaryColors: AnimeGradient.primary_color,
+                  secondaryColors: AnimeGradient.secondary_color,
                   child: Padding(
                     padding: EdgeInsets.all(30.0),
                     child: Column(
@@ -99,7 +100,14 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
                             children: [
                               Container(
                                 padding: EdgeInsets.all(8.0),
-                                child: TextField(
+                                child: TextFormField(
+                                  controller: emailController,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: (email) => email != null &&
+                                          !EmailValidator.validate(email)
+                                      ? "Enter a valid email"
+                                      : null,
                                   cursorColor: MyThemes.textColor,
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
@@ -125,7 +133,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
                           borderRadius:
                               BorderRadius.circular(changedButton ? 50 : 8),
                           child: InkWell(
-                            onTap: () => moveToHome(context),
+                            onTap: () => resetPassword(),
                             child: AnimatedContainer(
                               width: changedButton ? 50 : 220,
                               height: 50,
@@ -134,7 +142,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
                               child: Center(
                                 //can use wrap with center
                                 child: Text(
-                                  "Next",
+                                  "Get Reset Link",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -150,7 +158,18 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
                         "Don't worry. Please enter your email address associated with your account"
                             .text
                             .align(TextAlign.center)
-                            .make()
+                            .make(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: "Back to Login Screen"
+                              .text
+                              .color(Color.fromRGBO(143, 148, 251, 1))
+                              .medium
+                              .make(),
+                        ),
                         // Expanded(child: MyAnimation()),
                       ],
                     ),
@@ -160,6 +179,35 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage>
         ),
       ).pOnly(top: 50),
     );
+  }
+
+  Future<void> _showDialog1(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: const Text('No users were registered with that email'),
+        );
+      },
+    );
+  }
+
+  Future resetPassword() async {
+    final db = FirebaseFirestore.instance;
+
+    final isValid = _formKey.currentState!.validate();
+
+    if (!isValid) return;
+
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: emailController.text.trim());
+
+      Utils.showSnackBar("Password reset email sent");
+    } on FirebaseAuthException catch (e) {
+      _showDialog1(context);
+    }
   }
 }
 

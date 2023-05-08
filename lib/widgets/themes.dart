@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,6 +11,8 @@ class MyThemes {
   static Color darkBlueish = Color.fromARGB(255, 65, 79, 151);
   static Color boxEdge = Color.fromARGB(255, 86, 201, 138);
   static Color btnBox = Color(0xff6DA9E4);
+  static Color docIcon = Color(0xff8294C4);
+  static Color docIconWhite = Color(0xffF6F1F1);
 
   static Color calanderSelection = Color.fromARGB(106, 109, 168, 228);
 
@@ -35,5 +38,22 @@ class MyThemes {
           fontSize: 20,
           fontFamily: GoogleFonts.poppins().fontFamily,
         ));
+  }
+}
+
+class GetStudentName extends StatelessWidget {
+  List userList = [12];
+
+  void getData() {
+    final db = FirebaseFirestore.instance;
+
+    for (var i = 0; i < 1; i++) {
+      userList.add(db.collection("users").doc("user$i").get());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(userList[0].toString());
   }
 }
