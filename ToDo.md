@@ -10,16 +10,6 @@
                   -> doctor form
 
 Basic Info:
-fname
-lname
-Dob
-Address
-phone
-height
-weight
-sex
-blood group
-
 
 $$$$$$$$$$$$$$$$
 save data from health and personal form
@@ -40,10 +30,27 @@ search
 ****************************************************************
 
 
-ask to update vitals
 doctor signin form
 ehr
 consultancy form
 doctor setup available dates
 patient search doctor
 patient book available dates
+
+docotr: 
+fname
+lname
+Dob
+Address
+phone
+sex
+department/expertice
+experience
+
+upload certificate and license
+
+terms and conditions
+
+
+
+

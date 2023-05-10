@@ -1,18 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:remedy_app/data/sign-up-data.dart';
-import 'package:remedy_app/pages/login_page.dart';
+import 'package:remedy_app/pages/doctor-skeleton.dart';
+
 import 'package:remedy_app/pages/patient/patient-form.dart';
-import 'package:remedy_app/pages/sign-up_page.dart';
-import 'package:remedy_app/widgets/anime-gradient.dart';
+
 import 'package:velocity_x/velocity_x.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:social_login_buttons/social_login_buttons.dart';
 
 import '../main.dart';
 import '../utils/routes.dart';
@@ -31,6 +27,8 @@ class _PickAccountPage extends State<PickAccountPage> {
   bool pickedAccount = false;
 
   bool patientInfoFilles = false;
+
+  bool isPatient = true;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -53,9 +51,10 @@ class _PickAccountPage extends State<PickAccountPage> {
       });
     }
 
-    if (data!.data()!.containsKey('address')) {
+    if (data!.data()!.containsKey('blood-group')) {
       setState(() {
         patientInfoFilles = true;
+        isPatient = true;
       });
     }
   }
@@ -73,7 +72,11 @@ class _PickAccountPage extends State<PickAccountPage> {
     checkAccountPicked();
     if (pickedAccount) {
       if (!patientInfoFilles) {
-        return PatientPersonalForm();
+        if (isPatient) {
+          return PatientPersonalForm();
+        } else {
+          return DoctorSkeletonPage();
+        }
       } else {
         return SkeletonPage();
       }
@@ -146,6 +149,9 @@ class _PickAccountPage extends State<PickAccountPage> {
         "email": user!.email.toString(),
       });
 
+      setState(() {
+        isPatient = false;
+      });
       checkAccountPicked();
     } on FirebaseAuthException catch (e) {
       _showDialog1(context);

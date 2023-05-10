@@ -13,6 +13,7 @@ import 'package:remedy_app/data/patient-data.dart';
 import 'package:remedy_app/pages/login_page.dart';
 import 'package:remedy_app/pages/patient/check-vital-status.dart';
 import 'package:remedy_app/pages/patient/vitals.dart';
+import 'package:remedy_app/widgets/singleton-widget.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:age_calculator/age_calculator.dart';
@@ -49,7 +50,7 @@ class _PatientPage extends State<PatientPage> {
           child: Column(children: [
             PatientInitialInfo(),
             InfoAdditionButton(),
-            "Health".text.xl4.bold.make().pOnly(bottom: 12),
+            "Health".text.xl4.bold.make().pOnly(bottom: 5),
             PatientVitalsInfo(),
             "Appointments".text.xl4.bold.make().pOnly(bottom: 12),
             AppointmentCalander()
@@ -116,9 +117,14 @@ class _PatientInitialInfoState extends State<PatientInitialInfo> {
   Widget build(BuildContext context) {
     // readUsers();
 
+    // ignore: prefer_interpolation_to_compose_strings
     String fullName = userList[0]["first-name"].toString() +
         " " +
         userList[0]["last-name"].toString();
+
+//Data for other update page is set from here
+    Singleton singleObject = new Singleton();
+    singleObject.setUserData(userList);
 
     return Container(
       height: 150,
@@ -193,16 +199,18 @@ class InfoAdditionButton extends StatelessWidget {
             backgroundColor: MaterialStatePropertyAll(Color(0xffEEF2FF)),
             elevation: MaterialStateProperty.all(15),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, MyRoutes.updatePatientPersonal);
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                CupertinoIcons.add,
+                CupertinoIcons.person_crop_circle_badge_plus,
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
               5.squareBox,
-              "Add Personal Information".text.black.bold.make(),
+              "Personal Information".text.black.bold.make(),
             ],
           )),
       20.squareBox,
@@ -281,6 +289,8 @@ class _PatientVitalsInfoState extends State<PatientVitalsInfo> {
 
     String temperature = userList[0]["temperature"] + " °F";
 
+    // return Text("Hwllo");
+
     CheckVitalStatus vitalStatus = new CheckVitalStatus(
       bloodOxygen: userList[0]["blood-oxygen"],
       diastolic: userList[0]["diastolic"],
@@ -295,7 +305,7 @@ class _PatientVitalsInfoState extends State<PatientVitalsInfo> {
       return InkWell(
         child: Container(
           child: ElevatedButton(
-            child: Text("Update Vitals info for today"),
+            child: "Update Vitals Info".text.xl3.make(),
             onPressed: () {
               Navigator.pushNamed(context, MyRoutes.updatePatientVital);
             },
@@ -312,7 +322,9 @@ class _PatientVitalsInfoState extends State<PatientVitalsInfo> {
                 bloodPressure: bloodPressure,
                 status: vitalStatus.getBloodPressureStatus(),
               ),
-              ShowHeartRate(heartRate: heartRate)
+              ShowHeartRate(
+                  heartRate: heartRate,
+                  status: vitalStatus.getHeartRateStatus())
             ]).pOnly(right: 10, left: 10, bottom: 20),
         Row(
             //bottom row
@@ -320,9 +332,11 @@ class _PatientVitalsInfoState extends State<PatientVitalsInfo> {
             children: [
               ShowBloodOxygen(
                 bloodOxygen: bloodOxygen,
+                status: vitalStatus.getBloodOxygenStatus(),
               ),
               ShowTemperature(
                 temperature: temperature,
+                status: vitalStatus.getTemperatureStatus(),
               )
             ]).pOnly(right: 10, left: 10, bottom: 20)
       ]);

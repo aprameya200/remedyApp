@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/auth.dart';
 import 'package:remedy_app/pages/doctor-skeleton.dart';
 import 'package:remedy_app/pages/doctor/about-doctor-page.dart';
+import 'package:remedy_app/pages/doctor/doctor-form.dart';
 import 'package:remedy_app/pages/patient/patient-form.dart';
+import 'package:remedy_app/pages/patient/update-personal-patient-info.dart';
 import 'package:remedy_app/pages/patient/updateVitals.dart';
 import 'package:remedy_app/pages/patient_skeleton.dart';
 import 'package:remedy_app/pages/login_page.dart';
@@ -72,25 +74,30 @@ class MyApp extends StatelessWidget {
 
       routes: {
         //routes like laravel
-        "/login": (context) => StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Something went wrong !"));
-              } else if (snapshot.hasData) {
-                return VerifyEmail();
-              } else {
-                return Authenticate();
-              }
-            }),
-        MyRoutes.patientsProfileRoute: (context) => SkeletonPage(),
-        MyRoutes.verifyEmailAndRole: (context) => VerifyEmail(),
-        MyRoutes.patientHealthForm: (context) => PatientHealthForm(),
-        MyRoutes.updatePatientVital: (context) => UpdateVitalsPage()
+        "/login": (context) => DoctorForm()
+        // StreamBuilder<User?>(
+        //     stream: FirebaseAuth.instance.authStateChanges(),
+        //     builder: (context, snapshot) {
+        //       if (snapshot.connectionState == ConnectionState.waiting) {
+        //         return Center(
+        //           child: CircularProgressIndicator(),
+        //         );
+        //       } else if (snapshot.hasError) {
+        //         return Center(child: Text("Something went wrong !"));
+        //       } else if (snapshot.hasData) {
+        //         return VerifyEmail();
+        //       } else {
+        //         return Authenticate();
+        //       }
+        //     }),
+        // MyRoutes.patientsProfileRoute: (context) => SkeletonPage(),
+        // MyRoutes.verifyEmailAndRole: (context) => VerifyEmail(),
+        // MyRoutes.patientHealthForm: (context) => PatientHealthForm(),
+        // MyRoutes.updatePatientVital: (context) => UpdateVitalsPage(),
+        // MyRoutes.updatePatientPersonal: (context) =>
+        //     UpdatePatientPersonalForm(),
+        // MyRoutes.updatePatientHealthForm: (context) =>
+        //     UpdatePatientHealthForm(),
       },
     );
   }

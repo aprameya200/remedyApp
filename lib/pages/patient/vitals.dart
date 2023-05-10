@@ -16,11 +16,11 @@ import '../../widgets/themes.dart';
 Color setColor(String status) {
   if (status == "Normal") {
     return Color.fromARGB(239, 255, 255, 255);
-  } else if (status == "Elevated") {
+  } else if (status == "Elevated" || status == "Low") {
     return Colors.yellow;
   } else if (status == "High") {
     return Colors.red;
-  } else if (status == "Very High") {
+  } else if (status == "Very High" || status == "Very Low") {
     return Color.fromARGB(255, 255, 17, 0);
   } else {
     return Color.fromARGB(239, 255, 255, 255);
@@ -28,14 +28,18 @@ Color setColor(String status) {
 }
 
 String setText(String status, String text) {
-  if (status == "Normal") {
+  if (status == "Low") {
+    return "Your " + text + " is lower than normal";
+  } else if (status == "Normal") {
     return "Your " + text + " is normal";
   } else if (status == "Elevated") {
-    return "Your " + text + " is elevated";
+    return "Your " + text + " has elevated";
   } else if (status == "High") {
     return "Your " + text + " is high";
   } else if (status == "Very High") {
     return "Your " + text + " is very high";
+  } else if (status == "Very Low") {
+    return "Your " + text + " is very low";
   } else {
     return "Your " + text + " is normal";
   }
@@ -103,9 +107,13 @@ class ShowBloodPressure extends StatelessWidget {
 
 class ShowHeartRate extends StatelessWidget {
   final String heartRate;
+
+  final String status;
+
   const ShowHeartRate({
     Key? key,
     required this.heartRate,
+    required this.status,
   }) : super(key: key);
 
   @override
@@ -122,7 +130,7 @@ class ShowHeartRate extends StatelessWidget {
               5.0, // Move to bottom 5 Vertically
             ),
           )
-        ], color: Color(0xffEEF2FF), borderRadius: BorderRadius.circular(10)),
+        ], color: setColor(status), borderRadius: BorderRadius.circular(10)),
         height: 160,
         width: 180,
         child: Column(
@@ -149,7 +157,7 @@ class ShowHeartRate extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 "Heart Rate".text.bold.make(),
-                "Your heart rate is normal".text.scale(0.88).make()
+                setText(status, "heart rate").text.scale(0.88).make()
               ],
             )
           ],
@@ -161,29 +169,28 @@ class ShowHeartRate extends StatelessWidget {
 
 class ShowBloodOxygen extends StatelessWidget {
   final String bloodOxygen;
+  final String status;
   const ShowBloodOxygen({
     Key? key,
     required this.bloodOxygen,
+    required this.status,
   }) : super(key: key);
 
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Container(
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromARGB(171, 47, 43, 43),
-                blurRadius: 15.0, // soften the shadow
-                spreadRadius: 5.0, //extend the shadow
-                offset: Offset(
-                  5.0, // Move to right 5  horizontally
-                  5.0, // Move to bottom 5 Vertically
-                ),
-              )
-            ],
-            color: Color.fromARGB(255, 253, 253, 253),
-            borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(171, 47, 43, 43),
+            blurRadius: 15.0, // soften the shadow
+            spreadRadius: 5.0, //extend the shadow
+            offset: Offset(
+              5.0, // Move to right 5  horizontally
+              5.0, // Move to bottom 5 Vertically
+            ),
+          )
+        ], color: setColor(status), borderRadius: BorderRadius.circular(10)),
         height: 160,
         width: 180,
         child: Column(
@@ -210,7 +217,7 @@ class ShowBloodOxygen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 "Blood Oxygen Level".text.bold.make(),
-                "Your Blood Oxygen Level is normal".text.scale(0.88).make()
+                setText(status, "blood oxygen").text.scale(0.88).make()
               ],
             )
           ],
@@ -222,9 +229,11 @@ class ShowBloodOxygen extends StatelessWidget {
 
 class ShowTemperature extends StatelessWidget {
   final String temperature;
+  final String status;
   const ShowTemperature({
     Key? key,
     required this.temperature,
+    required this.status,
   }) : super(key: key);
 
   @override
@@ -241,7 +250,7 @@ class ShowTemperature extends StatelessWidget {
               5.0, // Move to bottom 5 Vertically
             ),
           )
-        ], color: Color(0xffA1DD70), borderRadius: BorderRadius.circular(10)),
+        ], color: setColor(status), borderRadius: BorderRadius.circular(10)),
         height: 160,
         width: 180,
         child: Column(
@@ -268,7 +277,7 @@ class ShowTemperature extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 "Temperature".text.bold.make(),
-                "Your temperature  is normal".text.scale(0.88).make()
+                setText(status, "temperature").text.scale(0.88).make()
               ],
             )
           ],

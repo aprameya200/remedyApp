@@ -8,4 +8,8 @@ class MyRoutes {
   static String patientHealthForm = "/healthForm"; //no object needed
 
   static String updatePatientVital = "/vitalForm"; //no object needed
+
+  static String updatePatientPersonal = "/personalUpdate"; //no object needed
+
+  static String updatePatientHealthForm = "/personalHealthUpdate";
 }

@@ -45,6 +45,36 @@ class PatientPersonalData {
         "weight": this.weight,
         "sex": this.sex,
         "blood-group": this.bloodGroup,
+        "systolic": "",
+        "diastolic": "",
+        "heart-rate": "",
+        "blood-oxygen": "",
+        "temperature": "",
+      });
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+  }
+
+  Future updateData() async {
+    final db = FirebaseFirestore.instance;
+
+    final user = FirebaseAuth.instance.currentUser!.email;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection("patient")
+          .doc(user.toString())
+          .update({
+        "first-name": this.fname,
+        "last-name": this.lname,
+        "date-of-birth": this.dob,
+        "address": this.address,
+        "phone": this.phone,
+        "height": this.height,
+        "weight": this.weight,
+        "sex": this.sex,
+        "blood-group": this.bloodGroup,
       });
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -77,6 +107,31 @@ class PatientHealthData {
   });
 
   Future submitData() async {
+    final db = FirebaseFirestore.instance;
+
+    final user = FirebaseAuth.instance.currentUser!.email;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection("patient")
+          .doc(user.toString())
+          .update({
+        "allergy": this.allergy,
+        "allergy-detail": this.allergy_specific,
+        "asthama": this.asthama,
+        "asthama-detail": this.asthama_specific,
+        "diabetes": this.diabetes,
+        "diabetes-detail": this.diabetes_specific,
+        "seizures": this.seizures,
+        "seizure-detail": this.seizures_specific,
+        "other-illness": this.others,
+      });
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+  }
+
+  Future update() async {
     final db = FirebaseFirestore.instance;
 
     final user = FirebaseAuth.instance.currentUser!.email;
