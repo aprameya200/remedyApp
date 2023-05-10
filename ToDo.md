@@ -38,3 +38,12 @@ consultancy report
 health record
 search
 ****************************************************************
+
+
+ask to update vitals
+doctor signin form
+ehr
+consultancy form
+doctor setup available dates
+patient search doctor
+patient book available dates

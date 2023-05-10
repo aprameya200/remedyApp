@@ -245,8 +245,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   Future signIn() async {
     final db = FirebaseFirestore.instance;
+
+    User? user = _firebaseAuth.currentUser;
 
     final isValid = _formKey.currentState!.validate();
 
@@ -269,10 +273,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     // password: "user@123");
 
     //adds data
-    // await FirebaseFirestore.instance
-    //     .collection("user")
-    //     .doc("new user")
-    //     .set({"name": "mymmy"});
 
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }

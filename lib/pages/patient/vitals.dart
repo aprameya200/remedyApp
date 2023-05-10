@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,25 +13,58 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 
 import '../../widgets/themes.dart';
 
+Color setColor(String status) {
+  if (status == "Normal") {
+    return Color.fromARGB(239, 255, 255, 255);
+  } else if (status == "Elevated") {
+    return Colors.yellow;
+  } else if (status == "High") {
+    return Colors.red;
+  } else if (status == "Very High") {
+    return Color.fromARGB(255, 255, 17, 0);
+  } else {
+    return Color.fromARGB(239, 255, 255, 255);
+  }
+}
+
+String setText(String status, String text) {
+  if (status == "Normal") {
+    return "Your " + text + " is normal";
+  } else if (status == "Elevated") {
+    return "Your " + text + " is elevated";
+  } else if (status == "High") {
+    return "Your " + text + " is high";
+  } else if (status == "Very High") {
+    return "Your " + text + " is very high";
+  } else {
+    return "Your " + text + " is normal";
+  }
+}
+
 class ShowBloodPressure extends StatelessWidget {
+  final String bloodPressure;
+  final String status;
+  const ShowBloodPressure({
+    Key? key,
+    required this.bloodPressure,
+    required this.status,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Container(
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromARGB(171, 47, 43, 43),
-                blurRadius: 15.0, // soften the shadow
-                spreadRadius: 5.0, //extend the shadow
-                offset: Offset(
-                  5.0, // Move to right 5  horizontally
-                  5.0, // Move to bottom 5 Vertically
-                ),
-              )
-            ],
-            color: Color.fromARGB(239, 255, 255, 255),
-            borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(171, 47, 43, 43),
+            blurRadius: 15.0, // soften the shadow
+            spreadRadius: 5.0, //extend the shadow
+            offset: Offset(
+              5.0, // Move to right 5  horizontally
+              5.0, // Move to bottom 5 Vertically
+            ),
+          )
+        ], color: setColor(status), borderRadius: BorderRadius.circular(10)),
         height: 160,
         width: 180,
         child: Column(
@@ -38,7 +74,7 @@ class ShowBloodPressure extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      color: Colors.red[100],
+                      color: Color.fromARGB(255, 255, 205, 210),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(
                     size: 50,
@@ -46,7 +82,7 @@ class ShowBloodPressure extends StatelessWidget {
                     color: Color.fromARGB(255, 255, 0, 0),
                   ).p4(),
                 ),
-                "120/80".text.xl.red900.bold.make()
+                bloodPressure.text.xl.red900.bold.make()
               ],
             ),
             6.squareBox,
@@ -55,7 +91,7 @@ class ShowBloodPressure extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 "Blood Pressure".text.bold.make(),
-                "Your blood pressure is normal".text.scale(0.88).make()
+                setText(status, "blood pressure").text.scale(0.88).make()
               ],
             )
           ],
@@ -66,6 +102,12 @@ class ShowBloodPressure extends StatelessWidget {
 }
 
 class ShowHeartRate extends StatelessWidget {
+  final String heartRate;
+  const ShowHeartRate({
+    Key? key,
+    required this.heartRate,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -98,7 +140,7 @@ class ShowHeartRate extends StatelessWidget {
                     color: Color.fromARGB(255, 255, 255, 255),
                   ).p4(),
                 ),
-                "104 bpm".text.xl.bold.make()
+                heartRate.text.xl.bold.make()
               ],
             ),
             6.squareBox,
@@ -118,6 +160,12 @@ class ShowHeartRate extends StatelessWidget {
 }
 
 class ShowBloodOxygen extends StatelessWidget {
+  final String bloodOxygen;
+  const ShowBloodOxygen({
+    Key? key,
+    required this.bloodOxygen,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -153,7 +201,7 @@ class ShowBloodOxygen extends StatelessWidget {
                     color: Color(0xffEEF2FF),
                   ).p4(),
                 ),
-                "95%".text.xl.bold.make()
+                bloodOxygen.text.xl.bold.make()
               ],
             ),
             6.squareBox,
@@ -173,6 +221,12 @@ class ShowBloodOxygen extends StatelessWidget {
 }
 
 class ShowTemperature extends StatelessWidget {
+  final String temperature;
+  const ShowTemperature({
+    Key? key,
+    required this.temperature,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -205,7 +259,7 @@ class ShowTemperature extends StatelessWidget {
                     color: Color.fromARGB(255, 175, 111, 0),
                   ).p4(),
                 ),
-                "98 °F".text.xl.bold.make()
+                temperature.text.xl.bold.make()
               ],
             ),
             6.squareBox,

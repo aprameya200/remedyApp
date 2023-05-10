@@ -19,6 +19,7 @@ import 'package:velocity_x/velocity_x.dart';
 
 import 'package:remedy_app/pages/login_page.dart';
 
+import '../../utils/routes.dart';
 import '../../widgets/themes.dart';
 
 class PatientPersonalForm extends StatefulWidget {
@@ -116,12 +117,19 @@ class _PatientPersonalFormState extends State<PatientPersonalForm> {
                             ),
                             15.squareBox,
                             FastDatePicker(
-                                name: 'dob',
-                                labelText: 'Date of Birth',
-                                firstDate: DateTime(1940),
-                                lastDate: DateTime.now(),
-                                onChanged: (value) =>
-                                    dateController.text = value.toString()),
+                              name: 'dob',
+                              labelText: 'Date of Birth',
+                              firstDate: DateTime(1940),
+                              lastDate: DateTime.now(),
+                              onChanged: (value) =>
+                                  dateController.text = value.toString(),
+                              validator: (value) {
+                                if (dateController.text == "") {
+                                  dateController.text =
+                                      DateTime.now().toString();
+                                }
+                              },
+                            ),
                             15.squareBox,
                             FastTextField(
                                 autovalidateMode:
@@ -178,29 +186,40 @@ class _PatientPersonalFormState extends State<PatientPersonalForm> {
                                 name: 'sex',
                                 labelText: 'Sex',
                                 options: const [
-                                  FastRadioOption(text: 'Male', value: 'male'),
+                                  FastRadioOption(text: 'Male', value: 'Male'),
                                   FastRadioOption(
-                                      text: 'Female', value: 'female'),
+                                      text: 'Female', value: 'Female'),
                                 ],
                                 onChanged: (value) =>
-                                    sexController.text = value.toString()),
+                                    sexController.text = value.toString(),
+                                validator: (value) {
+                                  if (sexController.text == "") {
+                                    sexController.text = "Male";
+                                  }
+                                }),
                             15.squareBox,
                             FastDropdown<String>(
-                                name: 'bloodgroup',
-                                labelText: 'Blood Group',
-                                items: [
-                                  'A+',
-                                  'A-',
-                                  'B+',
-                                  'B-',
-                                  'O+',
-                                  'O-',
-                                  'AB+',
-                                  'AB-'
-                                ],
-                                initialValue: 'A+',
-                                onChanged: (value) => bloodGroupController
-                                    .text = value.toString()),
+                              name: 'bloodgroup',
+                              labelText: 'Blood Group',
+                              items: [
+                                'A+',
+                                'A-',
+                                'B+',
+                                'B-',
+                                'O+',
+                                'O-',
+                                'AB+',
+                                'AB-'
+                              ],
+                              initialValue: 'A+',
+                              onChanged: (value) =>
+                                  bloodGroupController.text = value.toString(),
+                              validator: (value) {
+                                if (bloodGroupController.text == "") {
+                                  bloodGroupController.text = 'A+';
+                                }
+                              },
+                            )
                           ],
                         ).p12(),
                       ),
@@ -260,7 +279,7 @@ class _PatientPersonalFormState extends State<PatientPersonalForm> {
 
     if (!isValid) return;
 
-    PatientPersonalData(
+    PatientPersonalData healthdata = PatientPersonalData(
       fname: fnameController.text,
       lname: lnameController.text,
       dob: dateController.text,
@@ -271,6 +290,10 @@ class _PatientPersonalFormState extends State<PatientPersonalForm> {
       sex: sexController.text,
       bloodGroup: bloodGroupController.text,
     );
+
+    healthdata.submitData();
+
+    Navigator.pushNamed(context, MyRoutes.patientHealthForm);
   }
 
   /**
@@ -544,7 +567,24 @@ class _PatientHealthFormState extends State<PatientHealthForm> {
 
     if (!isValid) return;
 
-    print(allergyController.text);
+    if (!isValid) return;
+
+    PatientHealthData healthdata = PatientHealthData(
+        allergy: allergyController.text,
+        allergy_specific: alergySpecificController.text,
+        asthama: asthamaController.text,
+        asthama_specific: asthamaSpecificController.text,
+        diabetes: diabetesController.text,
+        diabetes_specific: diabetesSpecificController.text,
+        seizures: seisurezController.text,
+        seizures_specific: seisureSpecificController.text,
+        others: otherIssuesController.text);
+
+    healthdata.submitData();
+
+    Navigator.pushNamed(context, MyRoutes.patientsProfileRoute);
+
+    // print(allergyController.text);
   }
 }
 

@@ -1,12 +1,14 @@
 // ignore_for_file: dead_code, prefer_const_constructors
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/auth.dart';
 import 'package:remedy_app/pages/doctor-skeleton.dart';
 import 'package:remedy_app/pages/doctor/about-doctor-page.dart';
 import 'package:remedy_app/pages/patient/patient-form.dart';
+import 'package:remedy_app/pages/patient/updateVitals.dart';
 import 'package:remedy_app/pages/patient_skeleton.dart';
 import 'package:remedy_app/pages/login_page.dart';
 import 'package:remedy_app/pages/patient/mesages.dart';
@@ -16,13 +18,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:remedy_app/pages/pick_account.dart';
 import 'package:remedy_app/pages/verify_email.dart';
+import 'package:remedy_app/utils/routes.dart';
 import 'package:remedy_app/widgets/themes.dart';
 import 'package:remedy_app/widgets/utils.dart';
+import 'dart:ui' as ui;
+
+import 'data/patient-data.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
+  /************************************************************************************************ */
+  //uncomment this to remove red error
+
+  // RenderErrorBox.backgroundColor = Colors.transparent;
+  // RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   runApp(const MyApp());
 }
 
@@ -76,11 +87,10 @@ class MyApp extends StatelessWidget {
                 return Authenticate();
               }
             }),
-
-        //route has been changes to this page
-        // MyRoutes.homeRoute: (context) =>
-        //     HomePage(), //routing using rpoute classes
-        // MyRoutes.loginRoute: (context) => LoginPage(),
+        MyRoutes.patientsProfileRoute: (context) => SkeletonPage(),
+        MyRoutes.verifyEmailAndRole: (context) => VerifyEmail(),
+        MyRoutes.patientHealthForm: (context) => PatientHealthForm(),
+        MyRoutes.updatePatientVital: (context) => UpdateVitalsPage()
       },
     );
   }

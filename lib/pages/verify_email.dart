@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -73,9 +74,11 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   @override
-  Widget build(BuildContext context) => isEmailVerified
-      ? PickAccountPage() //pick account page
-      : Scaffold(
+  Widget build(BuildContext context) {
+    if (isEmailVerified) {
+      return PickAccountPage();
+    } else {
+      return Scaffold(
           // bottomNavigationBar: Example(),
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -108,4 +111,6 @@ class _VerifyEmailState extends State<VerifyEmail> {
               ],
             ),
           ).p16());
+    }
+  } //pick account page
 }
