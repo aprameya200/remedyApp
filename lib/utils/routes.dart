@@ -12,4 +12,9 @@ class MyRoutes {
   static String updatePatientPersonal = "/personalUpdate"; //no object needed
 
   static String updatePatientHealthForm = "/personalHealthUpdate";
+
+  static String uploadDocotorCredentials =
+      "/docotorCredentials"; //no object needed
+
+  static String doctorDash = "/doctorDashboard";
 }

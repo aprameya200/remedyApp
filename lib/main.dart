@@ -74,30 +74,31 @@ class MyApp extends StatelessWidget {
 
       routes: {
         //routes like laravel
-        "/login": (context) => DoctorForm()
-        // StreamBuilder<User?>(
-        //     stream: FirebaseAuth.instance.authStateChanges(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.connectionState == ConnectionState.waiting) {
-        //         return Center(
-        //           child: CircularProgressIndicator(),
-        //         );
-        //       } else if (snapshot.hasError) {
-        //         return Center(child: Text("Something went wrong !"));
-        //       } else if (snapshot.hasData) {
-        //         return VerifyEmail();
-        //       } else {
-        //         return Authenticate();
-        //       }
-        //     }),
-        // MyRoutes.patientsProfileRoute: (context) => SkeletonPage(),
-        // MyRoutes.verifyEmailAndRole: (context) => VerifyEmail(),
-        // MyRoutes.patientHealthForm: (context) => PatientHealthForm(),
-        // MyRoutes.updatePatientVital: (context) => UpdateVitalsPage(),
-        // MyRoutes.updatePatientPersonal: (context) =>
-        //     UpdatePatientPersonalForm(),
-        // MyRoutes.updatePatientHealthForm: (context) =>
-        //     UpdatePatientHealthForm(),
+        "/login": (context) => StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Something went wrong !"));
+              } else if (snapshot.hasData) {
+                return VerifyEmail();
+              } else {
+                return Authenticate();
+              }
+            }),
+        MyRoutes.patientsProfileRoute: (context) => SkeletonPage(),
+        MyRoutes.verifyEmailAndRole: (context) => VerifyEmail(),
+        MyRoutes.patientHealthForm: (context) => PatientHealthForm(),
+        MyRoutes.updatePatientVital: (context) => UpdateVitalsPage(),
+        MyRoutes.updatePatientPersonal: (context) =>
+            UpdatePatientPersonalForm(),
+        MyRoutes.updatePatientHealthForm: (context) =>
+            UpdatePatientHealthForm(),
+        MyRoutes.uploadDocotorCredentials: (context) => UploadCredentials(),
+        MyRoutes.doctorDash: (context) => DoctorSkeletonPage(),
       },
     );
   }

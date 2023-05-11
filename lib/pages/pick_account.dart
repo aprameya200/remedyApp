@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/doctor-skeleton.dart';
+import 'package:remedy_app/pages/doctor/doctor-form.dart';
 
 import 'package:remedy_app/pages/patient/patient-form.dart';
 
@@ -34,6 +35,7 @@ class _PickAccountPage extends State<PickAccountPage> {
 
   Future checkAccountPicked() async {
     User? user = _firebaseAuth.currentUser;
+    List currentUserPatient = [];
 
     final data = await FirebaseFirestore.instance //here
         .collection("patient")
@@ -45,23 +47,63 @@ class _PickAccountPage extends State<PickAccountPage> {
         .doc(user!.email.toString())
         .get();
 
+    setState(() {
+      currentUserPatient.add(data.data());
+    });
+
+    if (data2.exists) {
+      setState(() {
+        isPatient = false;
+
+        pickedAccount = true;
+      });
+    }
+
     if (data.exists || data2.exists) {
       setState(() {
         pickedAccount = true;
       });
     }
 
-    if (data!.data()!.containsKey('blood-group')) {
+    if (currentUserPatient[0]["address"] != null) {
       setState(() {
         patientInfoFilles = true;
-        isPatient = true;
       });
+
+      print("Hello");
+    } else {
+      print("Not true");
+    }
+  }
+
+  Future checkInfoFilled() async {
+    User? user = _firebaseAuth.currentUser;
+
+    List currentUserDoctor = [];
+
+    final data2 = await FirebaseFirestore.instance //here
+        .collection("doctor")
+        .doc(user!.email.toString())
+        .get();
+
+    setState(() {
+      currentUserDoctor.add(data2.data());
+    });
+
+    if (currentUserDoctor[0]["address"] != null) {
+      setState(() {
+        patientInfoFilles = true;
+      });
+      print("Hellooo");
     }
   }
 
   @override
   initState() {
     super.initState();
+
+    checkAccountPicked();
+    checkInfoFilled();
   }
 
   @override
@@ -69,16 +111,21 @@ class _PickAccountPage extends State<PickAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    checkAccountPicked();
+    print("check check");
+
     if (pickedAccount) {
       if (!patientInfoFilles) {
         if (isPatient) {
           return PatientPersonalForm();
         } else {
-          return DoctorSkeletonPage();
+          return DoctorForm();
         }
       } else {
-        return SkeletonPage();
+        if (isPatient) {
+          return SkeletonPage();
+        } else {
+          return DoctorSkeletonPage();
+        }
       }
     } else {
       return Scaffold(

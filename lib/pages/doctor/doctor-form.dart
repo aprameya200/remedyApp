@@ -1,15 +1,20 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_literals_to_create_immutables, unnecessary_new
 // ignore_for_file: prefer_const_constructors
 
-import 'package:animate_gradient/animate_gradient.dart';
-import 'package:flutter_fast_forms/flutter_fast_forms.dart';
+import 'dart:io';
 
+import 'package:flutter_fast_forms/flutter_fast_forms.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/data/submit-doctor-data.dart';
 import 'package:remedy_app/data/submit-patient-data.dart';
 import 'package:remedy_app/pages/patient/patients_page.dart';
 import 'package:remedy_app/pages/patient/validate-patient.dart';
@@ -35,10 +40,9 @@ class _DoctorFormState extends State<DoctorForm> {
   final dateController = new TextEditingController();
   final addressController = new TextEditingController();
   final phoneController = new TextEditingController();
-  final heightController = new TextEditingController();
-  final weightController = new TextEditingController();
   final sexController = new TextEditingController();
-  final bloodGroupController = new TextEditingController();
+  final departmentController = new TextEditingController();
+  final experienceCotrollerr = new TextEditingController();
 
   @override
   void dispose() {
@@ -47,10 +51,9 @@ class _DoctorFormState extends State<DoctorForm> {
     dateController.dispose();
     addressController.dispose();
     phoneController.dispose();
-    heightController.dispose();
-    weightController.dispose();
     sexController.dispose();
-    bloodGroupController.dispose();
+    departmentController.dispose();
+    experienceCotrollerr.dispose();
 
     super.dispose();
   }
@@ -88,8 +91,37 @@ class _DoctorFormState extends State<DoctorForm> {
                             ]),
                         child: Column(
                           children: [
-                            "Personal Information".text.xl3.make(),
                             5.squareBox,
+                            FastAutocomplete<String>(
+                              validator: (value) => value == null
+                                  ? "Please select a speciality"
+                                  : null,
+                              onSelected: (option) =>
+                                  departmentController.text = option.toString(),
+                              name: 'speciality',
+                              labelText: 'Speciality',
+                              options: const [
+                                'Pediatrician',
+                                'Allergist',
+                                'Dermatologist',
+                                'Ophthalmologist',
+                                'Gynecologist',
+                                'Cardiologist',
+                                'Endocrinologist',
+                                'Gastroenterologist',
+                                'Nephrologist',
+                                'Urologist',
+                                'Pulmonologist',
+                                'Otolaryngologist',
+                                'Neurologist',
+                                'Psychiatrist',
+                                'Oncologist',
+                                'Radiologist',
+                                'Rheumatologist',
+                                'Anesthesiologist',
+                              ],
+                            ),
+                            15.squareBox,
                             FastTextField(
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -172,27 +204,18 @@ class _DoctorFormState extends State<DoctorForm> {
                                   }
                                 }),
                             15.squareBox,
-                            FastDropdown<String>(
-                              name: 'bloodgroup',
-                              labelText: 'Blood Group',
-                              items: [
-                                'A+',
-                                'A-',
-                                'B+',
-                                'B-',
-                                'O+',
-                                'O-',
-                                'AB+',
-                                'AB-'
-                              ],
-                              onChanged: (value) =>
-                                  bloodGroupController.text = value.toString(),
-                              validator: (value) {
-                                if (bloodGroupController.text == "") {
-                                  bloodGroupController.text = 'A+';
-                                }
-                              },
-                            )
+                            FastTextField(
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (exp) => exp != null &&
+                                        validate.validateHeightandWeight(exp)
+                                    ? "Enter a valid number"
+                                    : null,
+                                keyboardType: TextInputType.number,
+                                name: 'experience',
+                                labelText: 'Experience in years',
+                                onChanged: (value) => experienceCotrollerr
+                                    .text = value.toString())
                           ],
                         ).p12(),
                       ),
@@ -252,21 +275,20 @@ class _DoctorFormState extends State<DoctorForm> {
 
     if (!isValid) return;
 
-    PatientPersonalData healthdata = PatientPersonalData(
+    SubmitDoctorData healthdata = SubmitDoctorData(
       fname: fnameController.text,
       lname: lnameController.text,
       dob: dateController.text,
       address: addressController.text,
       phone: phoneController.text,
-      height: heightController.text,
-      weight: weightController.text,
+      department: departmentController.text,
       sex: sexController.text,
-      bloodGroup: bloodGroupController.text,
+      experience: experienceCotrollerr.text,
     );
 
-    healthdata.submitData();
+    healthdata.submit();
 
-    Navigator.pushNamed(context, MyRoutes.patientHealthForm);
+    Navigator.pushNamed(context, MyRoutes.uploadDocotorCredentials);
   }
 
   /**
@@ -277,48 +299,24 @@ class _DoctorFormState extends State<DoctorForm> {
    */
 }
 
-class PatientHealthForm extends StatefulWidget {
+class UploadCredentials extends StatefulWidget {
   @override
-  State<PatientHealthForm> createState() => _PatientHealthFormState();
+  State<UploadCredentials> createState() => _UploadCredentialsState();
 }
 
-class _PatientHealthFormState extends State<PatientHealthForm> {
+class _UploadCredentialsState extends State<UploadCredentials> {
+  @override
   final _formKey = GlobalKey<FormState>();
-  bool changedButton = false;
 
-  final allergyController = new TextEditingController();
+  Validate validate = new Validate();
 
-  final alergySpecificController = new TextEditingController();
+  PlatformFile? pickedImage;
+  PlatformFile? pickedProfile;
 
-  final asthamaController = new TextEditingController();
-  final asthamaSpecificController = new TextEditingController();
-  final diabetesController = new TextEditingController();
-  final diabetesSpecificController = new TextEditingController();
-  final seisurezController = new TextEditingController();
-  final seisureSpecificController = new TextEditingController();
-
-  final otherIssuesController = new TextEditingController();
-
-  @override
-  void dispose() {
-    allergyController.dispose();
-    alergySpecificController.dispose();
-    asthamaController.dispose();
-    asthamaSpecificController.dispose();
-    diabetesController.dispose();
-    diabetesSpecificController.dispose();
-    seisurezController.dispose();
-    seisureSpecificController.dispose();
-    otherIssuesController.dispose();
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Color(0xffB9EDDD),
+        backgroundColor: MyThemes.btnBox,
         body: Container(
           child: SafeArea(
             child: SingleChildScrollView(
@@ -328,168 +326,91 @@ class _PatientHealthFormState extends State<PatientHealthForm> {
                   padding: EdgeInsets.all(30.0),
                   child: Column(
                     children: [
-                      "Patient Info".text.xl4.color(MyThemes.textColor).make(),
+                      "Doctor Info".text.xl4.color(MyThemes.textColor).make(),
                       20.squareBox,
                       Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: MyThemes.shadows,
-                                    blurRadius: 20.0,
-                                    offset: Offset(0, 10))
-                              ]),
-                          child: Column(
-                            children: [
-                              "Health Information".text.xl3.make(),
-                              "Allergy".text.xl.make(),
-                              10.squareBox,
-                              "Do you have any allergies ?".text.medium.make(),
-                              15.squareBox,
-                              FastRadioGroup<String>(
-                                  initialValue: "yes-allergy",
-                                  name: 'allergy',
-                                  labelText: 'Allergy',
-                                  options: const [
-                                    FastRadioOption(
-                                        text: 'Yes', value: 'yes-allergy'),
-                                    FastRadioOption(
-                                        text: 'No', value: 'no-allergy'),
-                                  ],
-                                  onChanged: (value) =>
-                                      allergyController.text = value.toString(),
-                                  validator: (value) {
-                                    if (allergyController.text == "") {
-                                      allergyController.text = "yes-allergy";
-                                    }
-                                  }),
-                              15.squareBox,
-                              FastTextField(
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                name: 'allergy-specific',
-                                labelText: 'If yes, please specify',
-                                validator: (value) =>
-                                    allergyController.text == "yes-allergy" &&
-                                            value == ""
-                                        ? "Please enter the specifics"
-                                        : null,
-                                onChanged: (value) => alergySpecificController
-                                    .text = value.toString(),
-                              ),
-                              15.squareBox,
-                              "Asthama".text.xl.make(),
-                              10.squareBox,
-                              "Do you suffer from asthma ?".text.medium.make(),
-                              15.squareBox,
-                              FastRadioGroup<String>(
-                                  name: 'asthama',
-                                  labelText: 'Asthama',
-                                  options: const [
-                                    FastRadioOption(
-                                        text: 'Yes', value: 'yes-asthama'),
-                                    FastRadioOption(
-                                        text: 'No', value: 'no-asthama'),
-                                  ],
-                                  onChanged: (value) =>
-                                      asthamaController.text = value.toString(),
-                                  validator: (value) {
-                                    if (asthamaController.text == "") {
-                                      asthamaController.text = "yes-asthama";
-                                    }
-                                  }),
-                              15.squareBox,
-                              FastTextField(
-                                name: 'asthama-specific',
-                                labelText: 'If yes, please specify',
-                                validator: (value) =>
-                                    asthamaController.text == "yes-asthama" &&
-                                            value == ""
-                                        ? "Please enter the specifics"
-                                        : null,
-                                onChanged: (value) => asthamaSpecificController
-                                    .text = value.toString(),
-                              ),
-                              15.squareBox,
-                              "Diabetes".text.xl.make(),
-                              10.squareBox,
-                              "Do you have diabetes ?".text.medium.make(),
-                              15.squareBox,
-                              FastRadioGroup<String>(
-                                  name: 'diabetes',
-                                  labelText: 'Diabetes',
-                                  options: const [
-                                    FastRadioOption(
-                                        text: 'Yes', value: 'yes-diabetes'),
-                                    FastRadioOption(
-                                        text: 'No', value: 'no-diabetes'),
-                                  ],
-                                  onChanged: (value) => diabetesController
-                                      .text = value.toString(),
-                                  validator: (value) {
-                                    if (diabetesController.text == "") {
-                                      diabetesController.text = "yes-diabetes";
-                                    }
-                                  }),
-                              15.squareBox,
-                              FastTextField(
-                                name: 'diabetes-specific',
-                                labelText: 'If yes, please specify',
-                                validator: (value) =>
-                                    asthamaController.text == "yes-diabetes" &&
-                                            value == ""
-                                        ? "Please enter the specifics"
-                                        : null,
-                                onChanged: (value) => asthamaSpecificController
-                                    .text = value.toString(),
-                              ),
-                              15.squareBox,
-                              "Seizures".text.xl.make(),
-                              10.squareBox,
-                              "Do you suffer from seizures ?"
-                                  .text
-                                  .medium
-                                  .make(),
-                              15.squareBox,
-                              FastRadioGroup<String>(
-                                  name: 'seizures',
-                                  labelText: 'Seizures',
-                                  options: const [
-                                    FastRadioOption(
-                                        text: 'Yes', value: 'yes-seizures'),
-                                    FastRadioOption(
-                                        text: 'No', value: 'no-seizures'),
-                                  ],
-                                  onChanged: (value) => seisurezController
-                                      .text = value.toString(),
-                                  validator: (value) {
-                                    if (seisurezController.text == "") {
-                                      seisurezController.text = "yes-seizures";
-                                    }
-                                  }),
-                              15.squareBox,
-                              FastTextField(
-                                name: 'seizures-specific',
-                                labelText: 'If yes, please specify',
-                                validator: (value) =>
-                                    seisurezController.text == "yes-seizures" &&
-                                            value == ""
-                                        ? "Please enter the specifics"
-                                        : null,
-                                onChanged: (value) => seisureSpecificController
-                                    .text = value.toString(),
-                              ),
-                              15.squareBox,
-                              FastTextField(
-                                name: 'other-issues',
-                                labelText: 'Any other health issues',
-                                onChanged: (value) => otherIssuesController
-                                    .text = value.toString(),
-                              )
-                            ],
-                          ).p12()),
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: MyThemes.shadows,
+                                  blurRadius: 20.0,
+                                  offset: Offset(0, 10))
+                            ]),
+                        child: Column(children: [
+                          if (pickedImage != null)
+                            Image.file(
+                              File(pickedImage!.path!),
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                          20.squareBox,
+                          Center(
+                            child: Material(
+                              color: Color(0xff57C5B6),
+                              // shape: changedButton ? BoxShape.circle : BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(50),
+                              child: InkWell(
+                                onTap: selectCredentialImage,
+                                child: AnimatedContainer(
+                                  width: 220,
+                                  height: 50,
+                                  // cannot use both color (of container and color of box decoration)
+                                  duration: Duration(seconds: 1),
+                                  child: Center(
+                                    //can use wrap with center
+                                    child: Text(
+                                      "Select Medical License",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                              ).p12(),
+                            ),
+                          ),
+                          20.squareBox,
+                          if (pickedProfile != null)
+                            Image.file(
+                              File(pickedProfile!.path!),
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                          20.squareBox,
+                          Center(
+                            child: Material(
+                              color: Color(0xff57C5B6),
+                              // shape: changedButton ? BoxShape.circle : BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(50),
+                              child: InkWell(
+                                onTap: selectProfileImage,
+                                child: AnimatedContainer(
+                                  width: 220,
+                                  height: 50,
+                                  // cannot use both color (of container and color of box decoration)
+                                  duration: Duration(seconds: 1),
+                                  child: Center(
+                                    //can use wrap with center
+                                    child: Text(
+                                      "Select Profile Picture",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                              ).p12(),
+                            ),
+                          ),
+                        ]).p12(),
+                      ),
                       SizedBox(
                         height: 25,
                       ),
@@ -497,27 +418,23 @@ class _PatientHealthFormState extends State<PatientHealthForm> {
                       Material(
                         color: Color(0xff57C5B6),
                         // shape: changedButton ? BoxShape.circle : BoxShape.rectangle,
-                        borderRadius:
-                            BorderRadius.circular(changedButton ? 50 : 8),
+                        borderRadius: BorderRadius.circular(50),
                         child: InkWell(
-                          onTap: () => submit(),
+                          onTap: uploadImage,
                           child: AnimatedContainer(
-                            width: changedButton ? 50 : 220,
+                            width: 220,
                             height: 50,
                             // cannot use both color (of container and color of box decoration)
                             duration: Duration(seconds: 1),
                             child: Center(
                               //can use wrap with center
-                              child: changedButton
-                                  ? Icon(Icons.done,
-                                      color: Colors.white) //if btn is clicked
-                                  : Text(
-                                      "Submit",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
                             ),
                           ),
                         ),
@@ -535,29 +452,46 @@ class _PatientHealthFormState extends State<PatientHealthForm> {
         ));
   }
 
-  void submit() {
-    final isValid = _formKey.currentState!.validate();
+  Future selectCredentialImage() async {
+    final result = await FilePicker.platform.pickFiles();
 
-    if (!isValid) return;
+    if (result == null) return;
+    setState(() {
+      pickedImage = result.files.first;
+    });
+  }
 
-    if (!isValid) return;
+  Future selectProfileImage() async {
+    final result = await FilePicker.platform.pickFiles();
 
-    PatientHealthData healthdata = PatientHealthData(
-        allergy: allergyController.text,
-        allergy_specific: alergySpecificController.text,
-        asthama: asthamaController.text,
-        asthama_specific: asthamaSpecificController.text,
-        diabetes: diabetesController.text,
-        diabetes_specific: diabetesSpecificController.text,
-        seizures: seisurezController.text,
-        seizures_specific: seisureSpecificController.text,
-        others: otherIssuesController.text);
+    if (result == null) return;
+    setState(() {
+      pickedProfile = result.files.first;
+    });
+  }
 
-    healthdata.submitData();
+  Future uploadImage() async {
+    final db = FirebaseFirestore.instance;
 
-    Navigator.pushNamed(context, MyRoutes.patientsProfileRoute);
+    final user = FirebaseAuth.instance.currentUser!.email;
 
-    // print(allergyController.text);
+    String pathString = "files/" + user.toString() + "-credential.jpg";
+    final path = pathString;
+    final file = File(pickedImage!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref.putFile(file);
+
+    String profilePicPath =
+        "/profilePictures/" + user.toString() + "-profile-pic.jpg";
+
+    final profile = profilePicPath;
+    final pictureFile = File(pickedProfile!.path!);
+
+    final refProfile = FirebaseStorage.instance.ref().child(profile);
+    refProfile.putFile(pictureFile);
+
+    Navigator.pushNamed(context, MyRoutes.doctorDash);
   }
 }
 

@@ -14,6 +14,12 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 import '../../widgets/themes.dart';
 
 class ShowNewPatients extends StatelessWidget {
+  final String patients;
+  const ShowNewPatients({
+    Key? key,
+    required this.patients,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -50,7 +56,7 @@ class ShowNewPatients extends StatelessWidget {
                     color: MyThemes.docIconWhite,
                   ).p4(),
                 ),
-                "12 ".text.xl.bold.make()
+                patients.text.xl.bold.make()
               ],
             ),
             6.squareBox,
@@ -70,6 +76,12 @@ class ShowNewPatients extends StatelessWidget {
 }
 
 class ShowConsultations extends StatelessWidget {
+  final String consultations;
+  const ShowConsultations({
+    Key? key,
+    required this.consultations,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -102,7 +114,7 @@ class ShowConsultations extends StatelessWidget {
                     color: MyThemes.docIconWhite,
                   ).p4(),
                 ),
-                "4".text.xl.bold.make()
+                consultations.text.xl.bold.make()
               ],
             ),
             6.squareBox,
@@ -122,6 +134,12 @@ class ShowConsultations extends StatelessWidget {
 }
 
 class ShowInProgress extends StatelessWidget {
+  final String progress;
+  const ShowInProgress({
+    Key? key,
+    required this.progress,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -157,7 +175,7 @@ class ShowInProgress extends StatelessWidget {
                     color: MyThemes.docIconWhite,
                   ).p4(),
                 ),
-                "5".text.xl.bold.make()
+                progress.text.xl.bold.make()
               ],
             ),
             6.squareBox,
@@ -177,6 +195,12 @@ class ShowInProgress extends StatelessWidget {
 }
 
 class ShowReports extends StatelessWidget {
+  final String reports;
+  const ShowReports({
+    Key? key,
+    required this.reports,
+  }) : super(key: key);
+
   @override
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -209,7 +233,7 @@ class ShowReports extends StatelessWidget {
                     color: Color.fromARGB(255, 255, 255, 255),
                   ).p4(),
                 ),
-                "14".text.white.xl.bold.make()
+                reports.text.white.xl.bold.make()
               ],
             ),
             6.squareBox,

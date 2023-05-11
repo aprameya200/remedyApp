@@ -44,7 +44,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
         sendVerificationEmail();
 
         timer =
-            Timer.periodic(Duration(seconds: 3), (_) => checkEmailVerified());
+            Timer.periodic(Duration(seconds: 10), (_) => checkEmailVerified());
       }
     } on FirebaseAuthException catch (e) {
       Utils.showSnackBar(e.toString());
@@ -69,6 +69,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   Future sendVerificationEmail() async {
     final user = FirebaseAuth.instance.currentUser!;
+    print("Email sent");
 
     await user.sendEmailVerification();
   }
