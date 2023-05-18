@@ -14,7 +14,7 @@ class MyThemes {
   static Color docIcon = Color(0xff8294C4);
   static Color docIconWhite = Color(0xffF6F1F1);
 
-  static Color calanderSelection = Color.fromARGB(106, 109, 168, 228);
+  static Color calanderSelection = Color.fromARGB(138, 39, 225, 194);
 
   AppBarTheme currentTheme() {
     return AppBarTheme(

@@ -17,4 +17,12 @@ class MyRoutes {
       "/docotorCredentials"; //no object needed
 
   static String doctorDash = "/doctorDashboard";
+
+  static String doctorPersonal = "/doctorpersonalUpdate";
+
+  static String addAboutDcotor = "/addAbout";
+
+  static String aboutDoctorPage = "/aboutDoctor";
+
+  static String bookAppointment = "/bookAppointment";
 }

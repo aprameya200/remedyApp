@@ -9,6 +9,8 @@
 -> chose account -> patient form -> submit data
                   -> doctor form
 
+                  IMP: Add alert box to forms and everything
+
 Basic Info:
 
 $$$$$$$$$$$$$$$$

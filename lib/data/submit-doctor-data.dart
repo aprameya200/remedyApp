@@ -44,7 +44,8 @@ class SubmitDoctorData {
         "patients": "0",
         "consulatations": "0",
         "in-progress": "0",
-        "reports": "0"
+        "reports": "0",
+        "about": ""
       });
     } on FirebaseAuthException catch (e) {
       print(e);

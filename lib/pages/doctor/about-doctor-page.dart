@@ -4,10 +4,14 @@
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/pages/doctor/add_about.dart';
+import 'package:remedy_app/utils/routes.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -23,6 +27,7 @@ import 'package:firebase_core/firebase_core.dart';
 //Calander
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../widgets/singleton-widget.dart';
 import '../../widgets/themes.dart';
 
 class AboutDoctor extends StatefulWidget {
@@ -34,8 +39,127 @@ class _AboutDoctorState extends State<AboutDoctor> {
   String aboutDoctor =
       "Grisha Yeager (グリシャ・イェーガー Gurisha Yēgā?) was an Eldian doctor who originated from the Liberio internment zone in Marley, and was one of the Eldian Restorationists. He was sent on a mission from 'the Owl' to infiltrate the Walls and take the Founding Titan from the Reiss family, and was given the power of the Attack Titan in order to do so";
 
+  List userList = [];
+  List reviews = [];
+  List availability = [];
+  List timings = [];
+
+  List daysAvailble = [];
+
+  List days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+  @override
+  initState() {
+    super.initState();
+    getDoctorData();
+    getReviewData();
+    getAvailability();
+    setAvailability();
+  }
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  Future getDoctorData() async {
+    User? user = _firebaseAuth.currentUser;
+
+    AboutDoctorData singleObject = new AboutDoctorData();
+
+    try {
+      final data = await FirebaseFirestore.instance //here
+          .collection("doctor")
+          .doc(AboutDoctorData.getString())
+          .get();
+
+      setState(() {
+        userList.add(data.data());
+      });
+    } on Exception catch (e) {
+      // TODO
+    }
+  }
+
+  Future getReviewData() async {
+    User? user = _firebaseAuth.currentUser;
+
+    AboutDoctorData singleObject = new AboutDoctorData();
+
+    try {
+      final data = await FirebaseFirestore.instance //here
+          .collection("reviews")
+          .doc(AboutDoctorData.getString())
+          .get();
+
+      setState(() {
+        reviews.add(data.data());
+      });
+    } on Exception catch (e) {
+      // TODO
+    }
+
+    print(reviews[0]["average-rating"]);
+  }
+
+  Future<String> getImage() async {
+    User? user = _firebaseAuth.currentUser;
+    AboutDoctorData singleObject = new AboutDoctorData();
+
+    Reference downloadUrl = await FirebaseStorage.instance
+        .ref()
+        .child("profilePictures")
+        .child("${AboutDoctorData.getString().toString()}-profile-pic.jpg");
+
+    return downloadUrl.getDownloadURL();
+  }
+
+  Future getAvailability() async {
+    User? user = _firebaseAuth.currentUser;
+    AboutDoctorData singleObject = new AboutDoctorData();
+
+    try {
+      final data = await FirebaseFirestore.instance //here
+          .collection("schedule")
+          .doc(AboutDoctorData.getString())
+          .get();
+
+      setState(() {
+        availability.add(data.data());
+      });
+    } on Exception catch (e) {
+      // TODO
+    }
+
+    print(availability[0]["timing"]["Monday"].toString());
+    print(availability[0]["timing"].length.toString());
+    setState(() {
+      timings.add(availability[0]["timing"]);
+      daysAvailble = timings[0].keys.toList();
+    });
+  }
+
+  setAvailability() {
+    // for (var i = 0; i < availability[0]["timing"].length; i++) {
+    //   // setState(() {
+    //   //   daysAvailble.add(availability[0]["timing"][i]);
+    //   // });
+
+    //   print(availability[0]["timing"].length.toString() + "AAAAA");
+    // }
+
+    // print(availability[0]["timing"]["Monday"].toString());
+  }
+
   @override
   Widget build(BuildContext context) {
+    AboutDoctorData singleObject = new AboutDoctorData();
+    singleObject
+        .setUserData(userList); //need to delete data from singleton class
+
+    String fullName = userList[0]["first-name"].toString() +
+        " " +
+        userList[0]["last-name"].toString();
+
+    String price = "Rs." + availability[0]["pricing"];
+
     return Scaffold(
       backgroundColor: MyThemes.boxEdge,
       appBar: AppBar(
@@ -81,19 +205,38 @@ class _AboutDoctorState extends State<AboutDoctor> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      backgroundColor: MyThemes.boxEdge,
+                      backgroundColor: MyThemes.btnBox,
                       radius: 55,
                       child: CircleAvatar(
                         radius: 50,
-                        backgroundImage: AssetImage('assets/images/CAPS.jpg'),
+                        backgroundColor: Colors.white,
+                        child: ClipOval(
+                          child: FutureBuilder<String>(
+                            future: getImage(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> image) {
+                              if (image.hasData) {
+                                return Image.network(
+                                  image.data.toString(),
+                                  fit: BoxFit.cover,
+                                  width: 200,
+                                  height: 200,
+                                ); // image is ready
+                                //return Text('data');
+                              } else {
+                                return new Container(); // placeholder
+                              }
+                            },
+                          ),
+                        ),
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        "Dr. Grisha Yaeger".text.xl2.bold.make(),
-                        "Proctologist".text.xl.make(),
+                        fullName.text.xl2.bold.make(),
+                        userList[0]["department"].toString().text.xl.make(),
                         Row(
                           children: [
                             Icon(
@@ -102,7 +245,11 @@ class _AboutDoctorState extends State<AboutDoctor> {
                               color: Colors.amber[400],
                             ),
                             10.squareBox,
-                            "4.2".text.bold.make(),
+                            reviews[0]["average-rating"]
+                                .toString()
+                                .text
+                                .bold
+                                .make(),
                           ],
                         ),
 
@@ -127,7 +274,12 @@ class _AboutDoctorState extends State<AboutDoctor> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          "123".text.xl.bold.make(),
+                          reviews[0]["review-count"]
+                              .toString()
+                              .text
+                              .xl
+                              .bold
+                              .make(),
                           "Reviews".text.make()
                         ],
                       ),
@@ -139,7 +291,12 @@ class _AboutDoctorState extends State<AboutDoctor> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          "34".text.xl.bold.make(),
+                          userList[0]["patients"]
+                              .toString()
+                              .text
+                              .xl
+                              .bold
+                              .make(),
                           "Patients".text.make()
                         ],
                       ),
@@ -151,7 +308,12 @@ class _AboutDoctorState extends State<AboutDoctor> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          "23".text.xl.bold.make(),
+                          userList[0]["experience"]
+                              .toString()
+                              .text
+                              .xl
+                              .bold
+                              .make(),
                           "Years Exp.".text.make(),
                         ],
                       )
@@ -171,7 +333,12 @@ class _AboutDoctorState extends State<AboutDoctor> {
                     children: [
                       "About".text.xl2.bold.make(),
                       10.squareBox,
-                      aboutDoctor.text.medium.justify.make(),
+                      userList[0]["about"]
+                          .toString()
+                          .text
+                          .medium
+                          .justify
+                          .make(),
                     ],
                   ).p16(),
                 ).pOnly(right: 30, left: 30),
@@ -186,7 +353,7 @@ class _AboutDoctorState extends State<AboutDoctor> {
                       Container(
                         height: 100,
                         child: ListView.builder(
-                          itemCount: 10,
+                          itemCount: 5,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) => Container(
                             decoration: BoxDecoration(
@@ -201,16 +368,20 @@ class _AboutDoctorState extends State<AboutDoctor> {
                                     ),
                                   )
                                 ],
-                                color: Color(0xffDBDFEA),
+                                color: daysAvailble.contains(days[index])
+                                    ? MyThemes.boxEdge
+                                    : Color.fromARGB(255, 255, 255, 255),
                                 borderRadius: BorderRadius.circular(13)),
                             height: 150,
                             width: 100,
                             margin: EdgeInsets.all(10),
                             child: Center(
                               child: Text(
-                                "Monday",
+                                days[index].toString(),
                                 style: TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    color: daysAvailble.contains(days[index])
+                                        ? Color.fromARGB(255, 0, 0, 0)
+                                        : Color.fromARGB(255, 192, 195, 204),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -221,20 +392,22 @@ class _AboutDoctorState extends State<AboutDoctor> {
                   ),
                 )).pOnly(left: 25, right: 25),
                 5.squareBox,
-                "Pricing".text.xl3.make(),
+                "Price Per Appointment".text.xl3.make(),
                 5.squareBox,
                 Container(
-                  width: 200,
+                  width: 220,
                   height: 100,
                   decoration: BoxDecoration(
                     color: Color(0xffDBDFEA),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Center(child: "Rs 700".text.xl6.bold.make().p16()),
+                  child: Center(child: price.text.xl6.bold.make().p16()),
                 ).pOnly(right: 30, left: 30),
                 15.squareBox,
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, MyRoutes.bookAppointment);
+                    },
                     style: ButtonStyle(
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(

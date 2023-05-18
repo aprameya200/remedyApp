@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/auth.dart';
 import 'package:remedy_app/pages/doctor-skeleton.dart';
 import 'package:remedy_app/pages/doctor/about-doctor-page.dart';
+import 'package:remedy_app/pages/doctor/add_about.dart';
 import 'package:remedy_app/pages/doctor/doctor-form.dart';
+import 'package:remedy_app/pages/doctor/update-doctor-personal.dart';
+import 'package:remedy_app/pages/patient/book-appointment.dart';
 import 'package:remedy_app/pages/patient/patient-form.dart';
 import 'package:remedy_app/pages/patient/update-personal-patient-info.dart';
 import 'package:remedy_app/pages/patient/updateVitals.dart';
@@ -36,6 +39,8 @@ Future main() async {
 
   // RenderErrorBox.backgroundColor = Colors.transparent;
   // RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
+  /************************************************************************************************ */
+
   runApp(const MyApp());
 }
 
@@ -99,6 +104,10 @@ class MyApp extends StatelessWidget {
             UpdatePatientHealthForm(),
         MyRoutes.uploadDocotorCredentials: (context) => UploadCredentials(),
         MyRoutes.doctorDash: (context) => DoctorSkeletonPage(),
+        MyRoutes.doctorPersonal: (context) => UpdateDoctorPersonalForm(),
+        MyRoutes.addAboutDcotor: (context) => AddAboutDoctor(),
+        MyRoutes.aboutDoctorPage: (context) => AboutDoctor(),
+        MyRoutes.bookAppointment: (context) => BookAppointment(),
       },
     );
   }

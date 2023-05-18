@@ -11,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:remedy_app/pages/doctor/dashboard-elements.dart';
 import 'package:remedy_app/pages/patient/vitals.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
@@ -22,6 +24,7 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../utils/routes.dart';
+import '../../widgets/singleton-widget.dart';
 import '../../widgets/themes.dart';
 
 class DoctorPage extends StatefulWidget {
@@ -127,6 +130,9 @@ class _DoctorInitialInfoState extends State<DoctorInitialInfo> {
 
   @override
   Widget build(BuildContext context) {
+    Singleton singleObject = new Singleton();
+    singleObject.setUserData(userList);
+
     String fullName = userList[0]["first-name"].toString() +
         " " +
         userList[0]["last-name"].toString();
@@ -191,7 +197,9 @@ class _DoctorInitialInfoState extends State<DoctorInitialInfo> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(MyThemes.btnBox),
                 ),
-                onPressed: null,
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRoutes.addAboutDcotor);
+                },
                 child: Row(
                   children: [
                     Icon(
@@ -199,7 +207,7 @@ class _DoctorInitialInfoState extends State<DoctorInitialInfo> {
                       color: Color.fromARGB(255, 254, 254, 254),
                     ),
                     5.squareBox,
-                    "Doctor".text.white.bold.make()
+                    "Add About".text.white.bold.make()
                   ],
                 ),
               )
@@ -223,7 +231,7 @@ class InfoAdditionButton extends StatelessWidget {
             elevation: MaterialStateProperty.all(15),
           ),
           onPressed: () {
-            Navigator.pushNamed(context, MyRoutes.updatePatientPersonal);
+            Navigator.pushNamed(context, MyRoutes.doctorPersonal);
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -244,6 +252,8 @@ class InfoAdditionButton extends StatelessWidget {
           ),
           onPressed: () {
             _signOut();
+            Singleton singleObject = new Singleton();
+            singleObject.deteleUserData();
             Navigator.pushNamed(context, MyRoutes.loginRoute);
           },
           child: Row(
@@ -276,12 +286,12 @@ class _DoctorDashboardInfoState extends State<DoctorDashboardInfo> {
   @override
   initState() {
     super.initState();
-    getPatientData();
+    getDoctortData();
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future getPatientData() async {
+  Future getDoctortData() async {
     User? user = _firebaseAuth.currentUser;
 
     try {

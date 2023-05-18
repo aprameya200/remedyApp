@@ -221,6 +221,8 @@ class InfoAdditionButton extends StatelessWidget {
           ),
           onPressed: () {
             _signOut();
+            Singleton singleObject = new Singleton();
+            singleObject.deteleUserData();
             Navigator.pushNamed(context, MyRoutes.loginRoute);
           },
           child: Row(
@@ -359,10 +361,17 @@ class AppointmentCalander extends StatelessWidget {
         )
       ], color: Color(0xffEEF2FF), borderRadius: BorderRadius.circular(10)),
       child: SfCalendar(
+        viewNavigationMode: ViewNavigationMode.snap,
+        blackoutDatesTextStyle:
+            TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
         view: CalendarView.month,
+        blackoutDates: [DateTime(2023, 5, 19)],
         headerStyle: CalendarHeaderStyle(textStyle: TextStyle(fontSize: 20)),
         todayHighlightColor: Colors.black,
-        cellBorderColor: Colors.transparent,
+        cellBorderColor: Color.fromARGB(0, 0, 0, 0),
+        onSelectionChanged: (CalendarDetails) {
+          print(CalendarDetails.date.toString());
+        },
         selectionDecoration: BoxDecoration(color: MyThemes.calanderSelection),
       ).p12(),
     ).pOnly(top: 0, left: 35, right: 40, bottom: 35);
