@@ -17,6 +17,7 @@ import '../../widgets/singleton-widget.dart';
 import '../../widgets/themes.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:intl/intl.dart';
 
 class BookAppointment extends StatefulWidget {
   @override
@@ -29,11 +30,21 @@ class _BookAppointmentState extends State<BookAppointment> {
   List availability = [];
   List timings = [];
   List daysAvailble = [];
+  List daysAvailableInInt = [];
+
   bool initialOk = false;
+
+  Map<String, dynamic> timeSlots = {};
+
+  Map<String, dynamic> dailytime = {};
+
+  String maximumAppointments = "";
 
   late DateTime initialDate = new DateTime.now();
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  late DateTime initialDisplayDate;
 
   Future getAvailability() async {
     User? user = _firebaseAuth.currentUser;
@@ -52,18 +63,84 @@ class _BookAppointmentState extends State<BookAppointment> {
       // TODO
     }
 
-    print(availability[0]["timing"]["Monday"].toString());
-    print(availability[0]["timing"].length.toString());
     setState(() {
       timings.add(availability[0]["timing"]);
       daysAvailble = timings[0].keys.toList();
+
+      timeSlots = timings[0];
+
+      maximumAppointments = availability[0]["maximum-appointments"];
     });
+
+    print(convertTimeSlots(timeSlots["Monday"]["slot-1"]["time"]));
+    print(maximumAppointments.toString());
+
+    for (var i = 0; i < daysAvailble.length; i++) {
+      setState(() {
+        dailytime[daysAvailble[i]] =
+            timeSlots[daysAvailble[i]]["slot-${i + 1}"];
+      });
+
+      print(dailytime["Monday"].toString() + i.toString());
+    }
+
+    // convertTimeSlots(timeSlots[0]["slot-2"]["time"]);
+  }
+
+  DateTime convertTimeSlots(Timestamp slotTime) {
+    Timestamp timeStamp = slotTime as Timestamp;
+
+    DateTime time = timeStamp.toDate();
+
+    print(time.toString());
+
+    return time;
+  }
+
+  List<String> getTimeSlots(String date) {
+    for (var i = 0; i < daysAvailble.length; i++) {
+      setState(() {
+        daysAvailableInInt.add(getWeekday(daysAvailble[i]));
+      });
+    }
+
+    List<String> slots = [];
+    DateTime convertedTime = DateTime.now();
+
+// add for all days in week
+
+    if (daysAvailableInInt.contains(DateTime.parse(date).weekday)) {
+      for (var i = 0; i < daysAvailble.length; i++) {
+        if (getWeekdayName(DateTime.parse(date).weekday) == daysAvailble[i]) {
+          for (var j = 0; j < timeSlots[daysAvailble[i]].length - 2; j++) {
+            //check the total time slots
+
+            convertedTime = convertTimeSlots(
+                timeSlots[daysAvailble[i]]["slot-${j + 1}"]["time"]);
+
+            String Hourminutes = DateFormat.Hm().format(convertedTime);
+            print(j + 1);
+
+            slots.add(Hourminutes);
+          }
+          // print();
+
+          // timeSlots["Monday"]["slot-1"]["time"]
+        }
+      }
+    } else {
+      slots.add("Please select available date");
+    }
+
+    return slots;
   }
 
   @override
   initState() {
     super.initState();
     getAvailability();
+
+    dateController.text = DateTime.now().toString();
   }
 
   // List userData = Singleton.userData;
@@ -107,6 +184,26 @@ class _BookAppointmentState extends State<BookAppointment> {
       return 5;
     } else {
       return 4;
+    }
+  }
+
+  String getWeekdayName(int day) {
+    if (day == 1) {
+      return "Monday";
+    }
+    if (day == 2) {
+      return "Tuesday";
+    }
+    if (day == 3) {
+      return "Wednesday";
+    }
+    if (day == 4) {
+      return "Thursday";
+    }
+    if (day == 5) {
+      return "Friday";
+    } else {
+      return "Error";
     }
   }
 
@@ -236,6 +333,11 @@ class _BookAppointmentState extends State<BookAppointment> {
                                 cellBorderColor: Color.fromARGB(0, 255, 193, 7),
                                 onSelectionChanged: (CalendarDetails) {
                                   print(CalendarDetails.date.toString());
+
+                                  setState(() {
+                                    dateController.text =
+                                        CalendarDetails.date.toString();
+                                  });
                                 },
                                 selectionDecoration: BoxDecoration(
                                     color: MyThemes.calanderSelection),
@@ -259,13 +361,14 @@ class _BookAppointmentState extends State<BookAppointment> {
                               radiusStyle: true,
                               cornerRadius: 4.0,
                               initialLabelIndex: 10,
-                              labels: [
-                                '12:00',
-                                '11:00',
-                                '4:00',
-                                'Winter',
-                                'Eve'
-                              ],
+                              labels: getTimeSlots(dateController.text),
+                              //  [
+                              //   '12:00',
+                              //   '11:00',
+                              //   '4:00',
+                              //   'Winter',
+                              //   'Eve'
+                              // ],
                               onToggle: (index) {
                                 print('switched to: $index');
                               },

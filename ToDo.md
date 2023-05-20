@@ -34,10 +34,13 @@ search
 
 doctor signin form
 ehr
+call text video
 consultancy form
 doctor setup available dates
 patient search doctor
 patient book available dates
+notifications
+online payment
 
 docotr: 
 fname
@@ -49,10 +52,11 @@ sex
 department/expertice
 experience
 
-upload certificate and license
+max appointments 10
+if appointments reach more than 10 then go to next
 
-terms and conditions
-
+one appointment is 30 mins
+doctor choses the timimg
 
 
 
