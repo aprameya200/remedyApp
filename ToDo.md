@@ -60,3 +60,10 @@ doctor choses the timimg
 
 
 
+
+
+
+#######################
+Known bugs:
+
+1. Date will still show if all slots are booked

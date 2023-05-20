@@ -32,13 +32,27 @@ class _BookAppointmentState extends State<BookAppointment> {
   List daysAvailble = [];
   List daysAvailableInInt = [];
 
+  int? timeIndex;
+
+  Map<String, dynamic> bookedAppointments = {};
+
+  List slotsAccordingToSelectedDay = [];
+
+  List checkingAppointments = [];
+
+  int slotNumber = 0;
+
   bool initialOk = false;
 
   Map<String, dynamic> timeSlots = {};
 
   Map<String, dynamic> dailytime = {};
 
+  int total_appointments = 0;
+
   String maximumAppointments = "";
+
+  String bookingSlot = "";
 
   late DateTime initialDate = new DateTime.now();
 
@@ -121,9 +135,26 @@ class _BookAppointmentState extends State<BookAppointment> {
             String Hourminutes = DateFormat.Hm().format(convertedTime);
             print(j + 1);
 
-            slots.add(Hourminutes);
+            if (checkingAppointments
+                    .contains(DateUtils.dateOnly(DateTime.parse(date))) &&
+                bookingSlot !=
+                    timeSlots[daysAvailble[i]]["slot-${j + 1}"]
+                        ["slot-number"]) {
+              print("Here" + bookingSlot);
+              slots.add(Hourminutes);
+            } else if (!checkingAppointments
+                .contains(DateUtils.dateOnly(DateTime.parse(date)))) {
+              slots.add(Hourminutes);
+            } else {
+              slots.add("Unavailable");
+            }
           }
           // print();
+          // print(checkingAppointments.toString() +
+          //     DateUtils.dateOnly(convertedTime).toString() +
+          //     "bookd app + curetn app");
+
+          print(bookingSlot.toString() + "Is the slot");
 
           // timeSlots["Monday"]["slot-1"]["time"]
         }
@@ -135,11 +166,53 @@ class _BookAppointmentState extends State<BookAppointment> {
     return slots;
   }
 
+  Future getAppointments() async {
+    User? user = _firebaseAuth.currentUser;
+
+    try {
+      final data = await FirebaseFirestore.instance //here
+          .collection("appointments")
+          .doc(AboutDoctorData.getString())
+          .get();
+
+      setState(() {
+        bookedAppointments[AboutDoctorData.getString()] = data.data();
+
+        total_appointments =
+            bookedAppointments[AboutDoctorData.getString()].length - 1;
+      });
+
+      for (var i = 0;
+          i < bookedAppointments[AboutDoctorData.getString()].length - 1;
+          i++) {
+        print(bookedAppointments[AboutDoctorData.getString()].length);
+
+        if (bookedAppointments[AboutDoctorData.getString()]
+                ["appontment-${i + 1}"]["status"] ==
+            "booked") {
+          setState(() {
+            checkingAppointments.add(DateUtils.dateOnly(convertTimeSlots(
+                bookedAppointments[AboutDoctorData.getString()]
+                    ["appontment-${i + 1}"]["date"])));
+
+            bookingSlot = bookedAppointments[AboutDoctorData.getString()]
+                ["appontment-${i + 1}"]["slot-number"];
+          });
+        }
+      }
+    } on Exception catch (e) {
+      // TODO
+    }
+
+    print(checkingAppointments.toString() + " Hello World");
+    //     ["booked-by"]);
+  }
+
   @override
   initState() {
     super.initState();
     getAvailability();
-
+    getAppointments();
     dateController.text = DateTime.now().toString();
   }
 
@@ -150,6 +223,7 @@ class _BookAppointmentState extends State<BookAppointment> {
   final subjectController = new TextEditingController();
   final descriptionController = new TextEditingController();
   final dateController = new TextEditingController();
+  var timeControllerIndex = new TextEditingController();
 
   @override
   void dispose() {
@@ -290,8 +364,11 @@ class _BookAppointmentState extends State<BookAppointment> {
                               maxLines: null,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
-                              validator: (fname) =>
-                                  fname == null ? "Please enter reason" : null,
+                              validator: (desc) {
+                                if (desc == null || desc == "") {
+                                  return "Please enter reason";
+                                }
+                              },
                               name: 'reason',
                               labelText: 'Reason',
                               onChanged: (value) =>
@@ -304,16 +381,19 @@ class _BookAppointmentState extends State<BookAppointment> {
                               minLines: 10,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
-                              validator: (fname) => fname == null
-                                  ? "Please enter description"
-                                  : null,
+                              validator: (desc) {
+                                if (desc == null || desc == "") {
+                                  return "Please enter description";
+                                }
+                              },
                               name: 'description',
                               labelText: 'Description',
                               onChanged: (value) =>
                                   descriptionController.text = value.toString(),
                             ),
                             15.squareBox,
-                            "Select Date and Time".text.xl2.make(),
+                            "Select Date".text.xl2.make(),
+                            "Red: Unavailable".text.medium.red500.make(),
                             15.squareBox,
                             Container(
                               decoration: BoxDecoration(
@@ -344,6 +424,8 @@ class _BookAppointmentState extends State<BookAppointment> {
                               ).p12(),
                             ),
                             15.squareBox,
+                            "Select Time".text.xl2.make(),
+                            15.squareBox,
                             ToggleSwitch(
                               activeFgColor: Colors.black54,
                               borderColor: [Colors.black],
@@ -362,15 +444,13 @@ class _BookAppointmentState extends State<BookAppointment> {
                               cornerRadius: 4.0,
                               initialLabelIndex: 10,
                               labels: getTimeSlots(dateController.text),
-                              //  [
-                              //   '12:00',
-                              //   '11:00',
-                              //   '4:00',
-                              //   'Winter',
-                              //   'Eve'
-                              // ],
                               onToggle: (index) {
                                 print('switched to: $index');
+
+                                timeIndex = index;
+                                // slotsAccordingToSelectedDay =
+                                //     getTimeSlots(dateController.text);
+                                timeControllerIndex.text = timeIndex.toString();
                               },
                             ),
                           ],
@@ -386,7 +466,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                         borderRadius:
                             BorderRadius.circular(changedButton ? 50 : 8),
                         child: InkWell(
-                          // onTap: () => updateData(),
+                          onTap: () => updateData(),
                           //  Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
@@ -428,37 +508,63 @@ class _BookAppointmentState extends State<BookAppointment> {
     ;
   }
 
-  // void updateData() async {
-  //   final isValid = _formKey.currentState!.validate();
+  void updateData() async {
+    final isValid = _formKey.currentState!.validate();
 
-  //   if (!isValid) return;
+    if (!isValid) return;
 
-  //   final db = FirebaseFirestore.instance;
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  //   final user = FirebaseAuth.instance.currentUser!.email;
+    User? user = _firebaseAuth.currentUser;
 
-  //   try {
-  //     await FirebaseFirestore.instance
-  //         .collection("doctor")
-  //         .doc(user.toString())
-  //         .update({"about": aboutController.text});
+    int addedAppointment = total_appointments + 1;
+    String app = "appontment-" + addedAppointment.toString();
 
-  //     QuickAlert.show(
-  //         context: context,
-  //         text: "Updated successfully",
-  //         type: QuickAlertType.success,
-  //         onConfirmBtnTap: () {
-  //           Navigator.pushNamed(context, MyRoutes.doctorDash);
-  //         });
-  //     // That's it to display an alert, use other properties to customize.
-  //   } on FirebaseAuthException catch (e) {
-  //     print(e);
-  //     QuickAlert.show(
-  //         context: context,
-  //         type: QuickAlertType.error,
-  //         onConfirmBtnTap: () {
-  //           Navigator.pushNamed(context, MyRoutes.doctorDash);
-  //         });
-  //   }
-  // }
+    int slotNum = int.parse(timeControllerIndex.text) + 1;
+
+    Map<String, dynamic> appDetails = {
+      "booked-by": user!.email.toString(),
+      "date": DateTime.parse(dateController.text),
+      "slot-number": slotNum.toString(),
+      "status": "booked",
+      "subject": subjectController.text,
+      "details": descriptionController.text,
+      "time": getTimeSlots(dateController.text)[slotNum - 1],
+    };
+
+    try {
+      await FirebaseFirestore.instance
+          .collection("appointments")
+          .doc(AboutDoctorData.getString())
+          .update({
+        "total-appointments": total_appointments + 1,
+        app: appDetails,
+        "doctor": AboutDoctorData.getString()
+      });
+
+      await FirebaseFirestore.instance
+          .collection("patient-appointment")
+          .doc(user!.email.toString())
+          .update({
+        app: appDetails,
+      });
+
+      QuickAlert.show(
+          context: context,
+          text: "Updated successfully",
+          type: QuickAlertType.success,
+          onConfirmBtnTap: () {
+            Navigator.pushNamed(context, MyRoutes.patientsProfileRoute);
+          });
+      // That's it to display an alert, use other properties to customize.
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          onConfirmBtnTap: () {
+            Navigator.pushNamed(context, MyRoutes.patientsProfileRoute);
+          });
+    }
+  }
 }
