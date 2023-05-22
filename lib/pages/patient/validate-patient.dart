@@ -57,4 +57,12 @@ class Validate {
       return true;
     }
   }
+
+  bool validateSlots(String number) {
+    if (regexNumber.hasMatch(number) && number.length <= 5) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

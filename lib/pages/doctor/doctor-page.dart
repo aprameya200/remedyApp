@@ -54,8 +54,8 @@ class _DoctorPage extends State<DoctorPage> {
             InfoAdditionButton(),
             "Dashboard".text.xl4.bold.make().pOnly(bottom: 12),
             DoctorDashboardInfo(),
-            AddReport(
-              addText: "Add Appomtment",
+            AddRoutine(
+              addText: "Set Working Routine",
             ),
             20.squareBox,
             "Your Calander".text.xl4.bold.make().pOnly(bottom: 12),

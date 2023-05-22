@@ -58,12 +58,22 @@ if appointments reach more than 10 then go to next
 one appointment is 30 mins
 doctor choses the timimg
 
+3. 3. Tommorow do ehr and consultancy form first, then from booking go to call 
 
 
-
+Todo
+1. Update doctor dashboard after new booking
+2. Need to add doctor name to appoinnmtne table dynamically
+3. Reviews table is needted to load doctor safely
+4. Add picture of patient, update of doctor
 
 
 #######################
 Known bugs:
 
 1. Date will still show if all slots are booked
+
+
+
+EHR
+

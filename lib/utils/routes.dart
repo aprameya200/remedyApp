@@ -25,4 +25,6 @@ class MyRoutes {
   static String aboutDoctorPage = "/aboutDoctor";
 
   static String bookAppointment = "/bookAppointment";
+
+  static String setRoutine = "/routine";
 }

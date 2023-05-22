@@ -52,7 +52,7 @@ class _BookAppointmentState extends State<BookAppointment> {
 
   String maximumAppointments = "";
 
-  String bookingSlot = "";
+  List bookingSlot = [];
 
   late DateTime initialDate = new DateTime.now();
 
@@ -126,7 +126,7 @@ class _BookAppointmentState extends State<BookAppointment> {
     if (daysAvailableInInt.contains(DateTime.parse(date).weekday)) {
       for (var i = 0; i < daysAvailble.length; i++) {
         if (getWeekdayName(DateTime.parse(date).weekday) == daysAvailble[i]) {
-          for (var j = 0; j < timeSlots[daysAvailble[i]].length - 2; j++) {
+          for (var j = 0; j < timeSlots[daysAvailble[i]].length; j++) {
             //check the total time slots
 
             convertedTime = convertTimeSlots(
@@ -137,10 +137,9 @@ class _BookAppointmentState extends State<BookAppointment> {
 
             if (checkingAppointments
                     .contains(DateUtils.dateOnly(DateTime.parse(date))) &&
-                bookingSlot !=
-                    timeSlots[daysAvailble[i]]["slot-${j + 1}"]
-                        ["slot-number"]) {
-              print("Here" + bookingSlot);
+                !bookingSlot.contains(timeSlots[daysAvailble[i]]
+                    ["slot-${j + 1}"]["slot-number"])) {
+              print(bookingSlot.toString());
               slots.add(Hourminutes);
             } else if (!checkingAppointments
                 .contains(DateUtils.dateOnly(DateTime.parse(date)))) {
@@ -195,8 +194,10 @@ class _BookAppointmentState extends State<BookAppointment> {
                 bookedAppointments[AboutDoctorData.getString()]
                     ["appontment-${i + 1}"]["date"])));
 
-            bookingSlot = bookedAppointments[AboutDoctorData.getString()]
-                ["appontment-${i + 1}"]["slot-number"];
+            bookingSlot.add(bookedAppointments[AboutDoctorData.getString()]
+                ["appontment-${i + 1}"]["slot-number"]);
+
+            print(checkingAppointments.toString() + "ABC");
           });
         }
       }
@@ -204,7 +205,6 @@ class _BookAppointmentState extends State<BookAppointment> {
       // TODO
     }
 
-    print(checkingAppointments.toString() + " Hello World");
     //     ["booked-by"]);
   }
 
@@ -484,7 +484,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                                   ? Icon(Icons.done,
                                       color: Colors.white) //if btn is clicked
                                   : Text(
-                                      "Update",
+                                      "Book",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -536,17 +536,22 @@ class _BookAppointmentState extends State<BookAppointment> {
       await FirebaseFirestore.instance
           .collection("appointments")
           .doc(AboutDoctorData.getString())
-          .update({
-        "total-appointments": total_appointments + 1,
-        app: appDetails,
-        "doctor": AboutDoctorData.getString()
-      });
+          .update({"total-appointments": addedAppointment, app: appDetails});
 
       await FirebaseFirestore.instance
           .collection("patient-appointment")
           .doc(user!.email.toString())
           .update({
-        app: appDetails,
+        app: {
+          "booked-by": user!.email.toString(),
+          "date": DateTime.parse(dateController.text),
+          "slot-number": slotNum.toString(),
+          "status": "booked",
+          "subject": subjectController.text,
+          "details": descriptionController.text,
+          "time": getTimeSlots(dateController.text)[slotNum - 1],
+          "doctor": AboutDoctorData.getUserData()[0]["first-name"]
+        },
       });
 
       QuickAlert.show(

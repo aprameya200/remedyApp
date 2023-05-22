@@ -12,6 +12,7 @@ import 'package:remedy_app/pages/patient/searchDoctor.dart';
 import 'package:bottom_bar_page_transition/bottom_bar_page_transition.dart';
 
 import '../widgets/themes.dart';
+import 'doctor/report-page.dart';
 
 // void main() => runApp(MaterialApp(
 //     builder: (context, child) {
@@ -34,7 +35,7 @@ class _DoctorSkeletonPageState extends State<DoctorSkeletonPage> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static const List<Widget> _widgetOptions = <Widget>[
     SearchDoctorPage(),
-    MedicniePage(
+    ReportPage(
       dummy: null,
     ),
     DoctorPage(

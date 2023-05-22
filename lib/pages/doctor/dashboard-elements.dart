@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/utils/routes.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -262,6 +263,54 @@ class AddReport extends StatelessWidget {
   Widget build(Object context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       InkWell(
+        child: Container(
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromARGB(171, 47, 43, 43),
+                  blurRadius: 15.0, // soften the shadow
+                  spreadRadius: 5.0, //extend the shadow
+                  offset: Offset(
+                    5.0, // Move to right 5  horizontally
+                    5.0, // Move to bottom 5 Vertically
+                  ),
+                )
+              ],
+              color: Color.fromARGB(255, 253, 253, 253),
+              borderRadius: BorderRadius.circular(10)),
+          height: 70,
+          width: 370,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                size: 45,
+                CupertinoIcons.plus,
+                color: Color.fromARGB(255, 55, 51, 51),
+              ),
+              addText.text.xl3.bold.make()
+            ],
+          ).p16(),
+        ),
+      ),
+    ]);
+  }
+}
+
+class AddRoutine extends StatelessWidget {
+  final String addText;
+  const AddRoutine({
+    Key? key,
+    required this.addText,
+  }) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, MyRoutes.setRoutine);
+        },
         child: Container(
           decoration: BoxDecoration(
               boxShadow: [

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/auth.dart';
 import 'package:remedy_app/pages/doctor-skeleton.dart';
 import 'package:remedy_app/pages/doctor/about-doctor-page.dart';
+import 'package:remedy_app/pages/doctor/add-routine.dart';
 import 'package:remedy_app/pages/doctor/add_about.dart';
 import 'package:remedy_app/pages/doctor/doctor-form.dart';
 import 'package:remedy_app/pages/doctor/update-doctor-personal.dart';
@@ -108,6 +109,7 @@ class MyApp extends StatelessWidget {
         MyRoutes.addAboutDcotor: (context) => AddAboutDoctor(),
         MyRoutes.aboutDoctorPage: (context) => AboutDoctor(),
         MyRoutes.bookAppointment: (context) => BookAppointment(),
+        MyRoutes.setRoutine: (context) => DoctorRoutine(),
       },
     );
   }

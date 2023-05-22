@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:remedy_app/data/patient-data.dart';
 import 'package:remedy_app/pages/login_page.dart';
 import 'package:remedy_app/pages/patient/check-vital-status.dart';
@@ -24,6 +25,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../utils/routes.dart';
 import '../../widgets/themes.dart';
+import 'ehr.dart';
 
 class PatientPage extends StatefulWidget {
   final dummy;
@@ -50,7 +52,7 @@ class _PatientPage extends State<PatientPage> {
           child: Column(children: [
             PatientInitialInfo(),
             InfoAdditionButton(),
-            "Health".text.xl4.bold.make().pOnly(bottom: 5),
+            "Health Today".text.xl4.bold.make().pOnly(bottom: 5),
             PatientVitalsInfo(),
             "Appointments".text.xl4.bold.make().pOnly(bottom: 12),
             AppointmentCalander()
@@ -168,7 +170,14 @@ class _PatientInitialInfoState extends State<PatientInitialInfo> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(MyThemes.boxEdge),
                 ),
-                onPressed: null,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EletronicHealthRecord(),
+                    ),
+                  );
+                },
                 child: Row(
                   children: [
                     Icon(
@@ -345,7 +354,53 @@ class _PatientVitalsInfoState extends State<PatientVitalsInfo> {
   }
 }
 
-class AppointmentCalander extends StatelessWidget {
+class AppointmentCalander extends StatefulWidget {
+  @override
+  State<AppointmentCalander> createState() => _AppointmentCalanderState();
+}
+
+class _AppointmentCalanderState extends State<AppointmentCalander> {
+  List appointments = [];
+  List appointmentKeys = [];
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    getPatientAppointments();
+  }
+
+  Future getPatientAppointments() async {
+    User? user = _firebaseAuth.currentUser;
+
+    try {
+      final data = await FirebaseFirestore.instance //here
+          .collection("patient-appointment")
+          .doc(user!.email.toString())
+          .get();
+
+      setState(() {
+        appointments.add(data.data());
+        appointmentKeys = appointments[0].keys.toList();
+      });
+    } on Exception catch (e) {
+      // TODO
+    }
+
+    print(appointmentKeys.toString());
+  }
+
+  String convertDateTimeDisplay(String date) {
+    final DateFormat displayFormater = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+    final DateFormat serverFormater = DateFormat('dd-MM-yyyy');
+    final DateTime displayDate = displayFormater.parse(date);
+    final String formatted = serverFormater.format(displayDate);
+    return formatted;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -360,17 +415,34 @@ class AppointmentCalander extends StatelessWidget {
           ),
         )
       ], color: Color(0xffEEF2FF), borderRadius: BorderRadius.circular(10)),
-      child: ListView.builder(
-          itemCount: 5,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-                leading: const Icon(Icons.list),
-                trailing: const Text(
-                  "GFG",
-                  style: TextStyle(color: Colors.green, fontSize: 15),
+      child: Container(
+        height: 200,
+        child: ListView.builder(
+            itemCount: appointmentKeys.length,
+            itemBuilder: (BuildContext context, int index) {
+              int count = index + 1;
+              String title = count.toString();
+
+              String onlyDate = convertDateTimeDisplay(appointments[0]
+                      [appointmentKeys[index]]["date"]
+                  .toDate()
+                  .toString());
+
+              return ListTile(
+                leading: Text(title),
+                trailing: Text(
+                  appointments[0][appointmentKeys[index]]["time"].toString(),
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0), fontSize: 15),
                 ),
-                title: Text("List item $index"));
-          }).p12(),
+                title: Text(appointments[0][appointmentKeys[index]]["subject"] +
+                    "\n" +
+                    "Dr." +
+                    appointments[0][appointmentKeys[index]]["doctor"]),
+                subtitle: Text(onlyDate),
+              ).pOnly(bottom: 20);
+            }),
+      ).p12(),
     ).pOnly(top: 0, left: 35, right: 40, bottom: 35);
   }
 }
