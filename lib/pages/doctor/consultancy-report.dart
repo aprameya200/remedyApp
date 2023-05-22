@@ -1,23 +1,21 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_literals_to_create_immutables, unnecessary_new, use_build_context_synchronously
+// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_literals_to_create_immutables, unnecessary_new, use_build_context_synchronously, prefer_interpolation_to_compose_strings
 // ignore_for_file: prefer_const_constructors
-
-import 'package:flutter_fast_forms/flutter_fast_forms.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_fast_forms/flutter_fast_forms.dart';
+import 'package:intl/intl.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:toggle_switch/toggle_switch.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import 'package:remedy_app/pages/patient/validate-patient.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
-
-import 'package:velocity_x/velocity_x.dart';
 
 import '../../utils/routes.dart';
 import '../../widgets/singleton-widget.dart';
 import '../../widgets/themes.dart';
-import 'package:quickalert/quickalert.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-import 'package:intl/intl.dart';
 
 class ConsultancyReport extends StatefulWidget {
   @override
@@ -214,9 +212,7 @@ class _ConsultancyReportState extends State<ConsultancyReport> {
       });
     } catch (e) {}
 
-    if (prescriptionCount == 0) {
-      prescriptionCount = 1;
-    }
+    prescriptionCount++;
 
     String prescriptionNumber = "Consultancy-" + prescriptionCount.toString();
 
@@ -239,7 +235,9 @@ class _ConsultancyReportState extends State<ConsultancyReport> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Prescriptions(),
+        builder: (context) => Prescriptions(
+          consultancyNumber: prescriptionCount,
+        ),
       ),
     );
   }
@@ -251,6 +249,12 @@ class _ConsultancyReportState extends State<ConsultancyReport> {
 class Prescriptions extends StatefulWidget {
   @override
   State<Prescriptions> createState() => _PrescriptionsState();
+
+  final int consultancyNumber;
+  const Prescriptions({
+    Key? key,
+    required this.consultancyNumber,
+  }) : super(key: key);
 }
 
 class _PrescriptionsState extends State<Prescriptions> {
@@ -264,6 +268,8 @@ class _PrescriptionsState extends State<Prescriptions> {
   @override
   initState() {
     super.initState();
+
+    getPrescriptionData();
   }
 
   // List userData = Singleton.userData;
@@ -282,10 +288,39 @@ class _PrescriptionsState extends State<Prescriptions> {
 
   List userData = Singleton.userData;
 
+  int prescriptionNumberForMedicine = 0;
+
   @override
   final _formKey = GlobalKey<FormState>();
 
   Validate validate = new Validate();
+  int prescriptionCount = 0;
+  Map<String, dynamic> toGetCount = {};
+
+  Future getPrescriptionData() async {
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+    User? user = _firebaseAuth.currentUser;
+
+    final data = await FirebaseFirestore.instance //here
+        .collection("consultancy")
+        .doc(user!.email.toString()) //need to change this
+        .get();
+
+    try {
+      setState(() {
+        toGetCount = data.data()!;
+        prescriptionCount = toGetCount.length;
+        prescriptionNumberForMedicine = widget.consultancyNumber;
+      });
+    } catch (e) {}
+
+    print(data.data()!.toString());
+
+    if (prescriptionCount == 0) {
+      prescriptionCount = 1;
+    }
+  }
 
   Widget build(BuildContext context) {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -432,10 +467,14 @@ class _PrescriptionsState extends State<Prescriptions> {
                                                 ),
                                                 TextButton(
                                                     onPressed: () {
+                                                      String count =
+                                                          "Medicine-" +
+                                                              prescriptionCount
+                                                                  .toString();
+
                                                       setState(() {
-                                                        singleMedicine[
-                                                            medinineNameController
-                                                                .text] = {
+                                                        singleMedicine[count] =
+                                                            {
                                                           "name":
                                                               medinineNameController
                                                                   .text,
@@ -450,9 +489,13 @@ class _PrescriptionsState extends State<Prescriptions> {
                                                                   .text,
                                                           "prescribed-by": user!
                                                               .email
-                                                              .toString()
+                                                              .toString(),
+                                                          "for-consultancy-no":
+                                                              prescriptionNumberForMedicine,
                                                         };
                                                       });
+
+                                                      prescriptionCount++;
                                                     },
                                                     child: "Save"
                                                         .text
@@ -468,8 +511,16 @@ class _PrescriptionsState extends State<Prescriptions> {
                                           "Add medicine".text.green700.make()),
                                   TextButton(
                                       onPressed: () {
+                                        int currentCount =
+                                            prescriptionCount - 1;
+
                                         setState(() {
                                           medicineTextBox.removeLast();
+                                          singleMedicine.removeWhere((key,
+                                                  value) =>
+                                              key ==
+                                              "Medicine-" +
+                                                  currentCount.toString());
                                         });
                                       },
                                       child:
@@ -499,7 +550,7 @@ class _PrescriptionsState extends State<Prescriptions> {
                         borderRadius:
                             BorderRadius.circular(changedButton ? 50 : 8),
                         child: InkWell(
-                          // onTap: () => updateData(),
+                          onTap: () => submitMedicines(),
                           //  Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
@@ -539,5 +590,49 @@ class _PrescriptionsState extends State<Prescriptions> {
           ),
         ));
     ;
+  }
+
+  void submitMedicines() async {
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+    User? user = _firebaseAuth.currentUser;
+
+    Map<String, dynamic> toGetCount = {};
+    int prescriptionCount = 0;
+
+    final data = await FirebaseFirestore.instance //here
+        .collection("prescriptions")
+        .doc("ludenstrky@gmail.com") //need to change this
+        .get();
+
+    try {
+      setState(() {
+        toGetCount = data.data()!;
+        prescriptionCount = toGetCount.length;
+      });
+    } catch (e) {}
+
+    prescriptionCount++;
+
+    String prescriptionNumber =
+        "Prescription-" + widget.consultancyNumber.toString();
+
+    Map<String, dynamic> setData = singleMedicine;
+
+    try {
+      final data = await FirebaseFirestore.instance //here
+          .collection("prescriptions")
+          .doc("ludenstrky@gmail.com") //need to change this
+          .update({prescriptionNumber: setData});
+    } on Exception catch (e) {
+      // TODO
+    }
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => (),
+    //   ),
+    // );
   }
 }
