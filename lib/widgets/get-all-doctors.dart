@@ -8,6 +8,7 @@ class DoctorList {
   List doctors = [];
 
   Map<String, dynamic> doctorFullnames = {};
+  Map<String, dynamic> doctorPhone = {};
 
   List chatDoctors = [];
   List chatIds = [];
@@ -45,6 +46,8 @@ class DoctorList {
       setDoctors(documentId);
       doctorFullnames[documentId] =
           "Dr." + document["first-name"] + " " + document["last-name"];
+
+      doctorPhone[documentId] = document["phone"];
     }
   }
 
@@ -111,5 +114,19 @@ class DoctorList {
     }
 
     return doctorName;
+  }
+
+  String getDoctorNumber(String chatID) {
+    String doctorNumber = "";
+
+    for (var i = 0; i < doctors.length; i++) {
+      if (chatID.contains(doctors[i])) {
+        doctorNumber = doctorPhone[doctors[i]];
+        break;
+      }
+    }
+
+    print(doctorNumber);
+    return doctorNumber;
   }
 }

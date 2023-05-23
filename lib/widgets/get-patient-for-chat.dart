@@ -8,6 +8,7 @@ class PatientList {
   List doctors = [];
 
   Map<String, dynamic> doctorFullnames = {};
+  Map<String, dynamic> doctorPhone = {};
 
   List chatDoctors = [];
   List chatIds = [];
@@ -43,6 +44,7 @@ class PatientList {
       Object? data = document.data();
 
       setDoctors(documentId);
+      print(documentId);
       doctorFullnames[documentId] =
           document["first-name"] + " " + document["last-name"];
     }
@@ -71,7 +73,7 @@ class PatientList {
 
       print(documentSnapshot.id + " is the id");
 
-      if (documentSnapshot.exists != null) {
+      if (documentSnapshot != null) {
         // Document exists, do something
         chatIds.add(chatID);
       } else {
@@ -111,5 +113,19 @@ class PatientList {
     }
 
     return doctorName;
+  }
+
+  String getDoctorNumber(String chatID) {
+    String doctorNumber = "";
+
+    for (var i = 0; i < doctors.length; i++) {
+      if (chatID.contains(doctors[i])) {
+        doctorNumber = doctorPhone[doctors[i]];
+        break;
+      }
+    }
+
+    print(doctorNumber);
+    return doctorNumber;
   }
 }

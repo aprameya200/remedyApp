@@ -53,21 +53,19 @@ department/expertice
 experience
 
 
-
-1. 3. Tommorow do ehr and consultancy form first, then from booking go to call 
-
-
 Todo
 1. Update doctor dashboard after new booking
 2. Need to add doctor name to appoinnmtne table dynamically
 3. Reviews table is needted to load doctor safely -- can be done later
 4. Add picture of patient, update of doctor -- can be done later
+5. Meet link -- can be done later
 
 
 #######################
 Known bugs:
 
 1. Date will still show if all slots are booked
+2. Chat will not show even if there is valid chat id , not null will make all users show
 
 
 

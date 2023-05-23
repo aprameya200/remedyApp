@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 50,
                         ),
                         Material(
                           color: Color(0xff57C5B6),
@@ -199,26 +199,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            LineDivider(),
-                            "Or".text.lg.make(),
-                            LineDivider()
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SocialLoginButton(
-                          backgroundColor: MyThemes.googleButton,
-                          buttonType: SocialLoginButtonType.google,
-                          onPressed: () {},
-                          text: "Login With Google",
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -234,6 +215,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             )
                           ],
                         ),
+                        130.squareBox
                         // Expanded(child: MyAnimation()),
                       ],
                     ),

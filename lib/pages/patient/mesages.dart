@@ -1,22 +1,24 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:convert';
 
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:remedy_app/pages/patient/vitals.dart';
-import 'package:remedy_app/widgets/get-all-doctors.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import 'package:remedy_app/pages/patient/vitals.dart';
 import 'package:remedy_app/pages/sign-up_page.dart';
-import 'package:crypto/crypto.dart';
+import 'package:remedy_app/widgets/get-all-doctors.dart';
 
 //Calander
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -55,6 +57,8 @@ class _MessagePageState extends State<MessagePage> with WidgetsBindingObserver {
   List chatIDs = [];
 
   DoctorList docs = DoctorList();
+
+  String phone = "";
 
   @override
   void initState() {
@@ -130,6 +134,8 @@ class _MessagePageState extends State<MessagePage> with WidgetsBindingObserver {
                                 MaterialPageRoute(
                                     builder: (context) => ChatRoom(
                                           chatRoomId: chatIDs[index],
+                                          Phone: docs
+                                              .getDoctorNumber(chatIDs[index]),
                                         )),
                               );
                             },
@@ -150,8 +156,13 @@ class _MessagePageState extends State<MessagePage> with WidgetsBindingObserver {
 class ChatRoom extends StatelessWidget {
   // final List userMap;
   final String chatRoomId;
+  final String Phone;
 
-  ChatRoom({required this.chatRoomId});
+  ChatRoom({
+    Key? key,
+    required this.chatRoomId,
+    required this.Phone,
+  }) : super(key: key);
 
   final TextEditingController _message = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -230,7 +241,7 @@ class ChatRoom extends StatelessWidget {
                 children: [
                   Container(
                     height: size.height / 17,
-                    width: size.width / 1.3,
+                    width: size.width / 1.5,
                     child: TextField(
                       controller: _message,
                       decoration: InputDecoration(
@@ -241,6 +252,15 @@ class ChatRoom extends StatelessWidget {
                     ),
                   ),
                   IconButton(icon: Icon(Icons.send), onPressed: onSendMessage),
+                  IconButton(
+                      onPressed: () async {
+                        final Uri url = Uri(scheme: 'tel', path: Phone);
+
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        }
+                      },
+                      icon: Icon(Icons.call))
                 ],
               ),
             ),
@@ -248,6 +268,16 @@ class ChatRoom extends StatelessWidget {
         ],
       )),
     );
+  }
+
+  void makePhoneCall(String phoneNumber) async {
+    String url = 'tel:$phoneNumber';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not make the phone call');
+    }
   }
 
   Widget messages(Size size, Map<String, dynamic> map, BuildContext context) {
