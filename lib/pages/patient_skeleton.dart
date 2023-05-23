@@ -40,7 +40,8 @@ class _SkeletonPageState extends State<SkeletonPage> {
       dummy: null,
     ),
     MessagePage(
-      dummy: null,
+      secondUser: '',
+      currentUser: '',
     ),
   ];
 

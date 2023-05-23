@@ -6,8 +6,11 @@ import 'package:flutter_fast_forms/flutter_fast_forms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:remedy_app/pages/patient/mesages.dart';
 
 import 'package:remedy_app/pages/patient/validate-patient.dart';
+import 'package:remedy_app/pages/patient_skeleton.dart';
+import 'package:remedy_app/widgets/create-chat-room.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'package:velocity_x/velocity_x.dart';
@@ -559,7 +562,14 @@ class _BookAppointmentState extends State<BookAppointment> {
           text: "Updated successfully",
           type: QuickAlertType.success,
           onConfirmBtnTap: () {
-            Navigator.pushNamed(context, MyRoutes.patientsProfileRoute);
+            CreateChat newChat = CreateChat(
+                user1: user!.email.toString(),
+                user2: AboutDoctorData.getString());
+
+            newChat.createChatRoom();
+
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SkeletonPage()));
           });
       // That's it to display an alert, use other properties to customize.
     } on FirebaseAuthException catch (e) {

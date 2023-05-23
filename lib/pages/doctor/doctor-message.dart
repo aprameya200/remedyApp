@@ -12,6 +12,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:remedy_app/pages/patient/vitals.dart';
 import 'package:remedy_app/widgets/get-all-doctors.dart';
+import 'package:remedy_app/widgets/get-patient-for-chat.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -31,19 +32,20 @@ import '../../widgets/themes.dart';
 //user 2 data must be taken from another collection
 //user 2 data must be taken from another collection
 
-class MessagePage extends StatefulWidget {
+class DoctorMessagePage extends StatefulWidget {
   final String currentUser;
 
   final String secondUser;
 
-  const MessagePage(
+  const DoctorMessagePage(
       {super.key, required this.currentUser, required this.secondUser});
 
   @override
-  State<MessagePage> createState() => _MessagePageState();
+  State<DoctorMessagePage> createState() => _DoctorMessagePageState();
 }
 
-class _MessagePageState extends State<MessagePage> with WidgetsBindingObserver {
+class _DoctorMessagePageState extends State<DoctorMessagePage>
+    with WidgetsBindingObserver {
   List user_two_data = [];
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -54,7 +56,7 @@ class _MessagePageState extends State<MessagePage> with WidgetsBindingObserver {
 
   List chatIDs = [];
 
-  DoctorList docs = DoctorList();
+  PatientList docs = PatientList();
 
   @override
   void initState() {

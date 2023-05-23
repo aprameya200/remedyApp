@@ -12,6 +12,7 @@ import 'package:remedy_app/pages/patient/searchDoctor.dart';
 import 'package:bottom_bar_page_transition/bottom_bar_page_transition.dart';
 
 import '../widgets/themes.dart';
+import 'doctor/doctor-message.dart';
 import 'doctor/report-page.dart';
 
 // void main() => runApp(MaterialApp(
@@ -41,8 +42,9 @@ class _DoctorSkeletonPageState extends State<DoctorSkeletonPage> {
     DoctorPage(
       dummy: null,
     ),
-    MessagePage(
-      dummy: null,
+    DoctorMessagePage(
+      secondUser: '',
+      currentUser: '',
     ),
   ];
 
