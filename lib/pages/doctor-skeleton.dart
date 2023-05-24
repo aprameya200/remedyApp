@@ -35,7 +35,6 @@ class _DoctorSkeletonPageState extends State<DoctorSkeletonPage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static const List<Widget> _widgetOptions = <Widget>[
-    SearchDoctorPage(),
     ReportPage(
       dummy: null,
     ),
@@ -100,10 +99,7 @@ class _DoctorSkeletonPageState extends State<DoctorSkeletonPage> {
               // ignore: prefer_const_literals_to_create_immutables
               tabs: [
                 // ignore: prefer_const_constructors
-                GButton(
-                  icon: CupertinoIcons.search_circle_fill,
-                  text: 'Search',
-                ),
+
                 GButton(
                   icon: CupertinoIcons.doc_plaintext,
                   text: 'Reports',

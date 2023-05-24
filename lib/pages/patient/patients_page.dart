@@ -2,6 +2,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_import
 
 import 'package:animate_gradient/animate_gradient.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,6 +25,7 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../utils/routes.dart';
+import '../../widgets/get-reports.dart';
 import '../../widgets/themes.dart';
 import 'ehr.dart';
 
@@ -36,6 +38,18 @@ class PatientPage extends StatefulWidget {
 }
 
 class _PatientPage extends State<PatientPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +89,24 @@ class _PatientInitialInfoState extends State<PatientInitialInfo> {
   initState() {
     super.initState();
     getPatientData();
+    duplicateCollection("patient", "health-record");
+  }
+
+  Future<void> duplicateCollection(
+      String sourceCollection, String destinationCollection) async {
+    // Get reference to the source and destination collections
+    CollectionReference sourceRef =
+        FirebaseFirestore.instance.collection(sourceCollection);
+    CollectionReference destinationRef =
+        FirebaseFirestore.instance.collection(destinationCollection);
+
+    // Retrieve all documents from the source collection
+    QuerySnapshot snapshot = await sourceRef.get();
+
+    // Iterate through each document and write it to the destination collection
+    for (QueryDocumentSnapshot docSnapshot in snapshot.docs) {
+      await destinationRef.doc(docSnapshot.id).set(docSnapshot.data());
+    }
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

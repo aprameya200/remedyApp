@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -89,56 +91,58 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
         elevation: 0.0,
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: MyThemes.boxEdge,
-        tooltip: 'Search Doctor',
-        onPressed: () => showSearch(
-          context: context,
-          delegate: SearchPage(
-            searchStyle: TextStyle(
-                fontSize: 30,
-                decoration: null,
-                fontFamily: GoogleFonts.poppins().fontFamily),
-            barTheme: ThemeData(appBarTheme: search.searchTheme()),
-            onQueryUpdate: print,
-            items: searchResults,
-            searchLabel: 'Search Doctor',
-            suggestion: const Center(
-              child: Text('Filter people by name, surname or department'),
-            ),
-            failure: const Center(
-              child: Text('No person found :('),
-            ),
-            filter: (person) => [
-              person.name,
-              person.surname,
-              person.department,
-            ],
-            sort: (a, b) => a.compareTo(b),
-            builder: (person) => ListTile(
-              onTap: () {
-                AboutDoctorData doctorData = new AboutDoctorData();
+      body: Center(
+        child: TextButton(
+            onPressed: () => showSearch(
+                  context: context,
+                  delegate: SearchPage(
+                    searchStyle: TextStyle(
+                        fontSize: 30,
+                        decoration: null,
+                        fontFamily: GoogleFonts.poppins().fontFamily),
+                    barTheme: ThemeData(appBarTheme: search.searchTheme()),
+                    onQueryUpdate: print,
+                    items: searchResults,
+                    searchLabel: 'Search Doctor',
+                    suggestion: const Center(
+                      child:
+                          Text('Filter people by name, surname or department'),
+                    ),
+                    failure: const Center(
+                      child: Text('No person found :('),
+                    ),
+                    filter: (person) => [
+                      person.name,
+                      person.surname,
+                      person.department,
+                    ],
+                    sort: (a, b) => a.compareTo(b),
+                    builder: (person) => ListTile(
+                      onTap: () {
+                        AboutDoctorData doctorData = new AboutDoctorData();
 
-                for (var i = 0; i < userIDs[0].length; i++) {
-                  if (userList[i]["first-name"] == person.name) {
-                    doctorData.setString(userIDs[0][i].toString());
-                  }
-                }
+                        for (var i = 0; i < userIDs[0].length; i++) {
+                          if (userList[i]["first-name"] == person.name) {
+                            doctorData.setString(userIDs[0][i].toString());
+                          }
+                        }
 
-                Navigator.pushNamed(context, MyRoutes.aboutDoctorPage);
-              },
-              title: Text(
-                person.name,
-              ),
-              subtitle: Text(person.surname),
-              trailing: Text(person.department),
-            ),
-          ),
-        ),
-        child: const Icon(
-          Icons.search,
-          color: Colors.black,
-        ),
+                        Navigator.pushNamed(context, MyRoutes.aboutDoctorPage);
+                      },
+                      title: Text(
+                        person.name,
+                      ),
+                      subtitle: Text(person.surname),
+                      trailing: Text(person.department),
+                    ),
+                  ),
+                ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                "Search".text.xl5.make(),
+              ],
+            )),
       ),
     );
   }

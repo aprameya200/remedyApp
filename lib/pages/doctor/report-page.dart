@@ -14,6 +14,7 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 //Calander
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../widgets/get-reports.dart';
 import '../../widgets/themes.dart';
 
 class ReportPage extends StatefulWidget {
@@ -26,27 +27,66 @@ class ReportPage extends StatefulWidget {
 }
 
 class _ReportPageState extends State<ReportPage> {
+  Map<String, dynamic> allConsultancyReports = {};
+
+  int counter = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    getConsultancy();
+  }
+
+  Future getConsultancy() async {
+    GetReports consultancy = GetReports();
+
+    await consultancy.getReports();
+
+    setState(() {
+      allConsultancyReports = consultancy.consultancyData;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // bottomNavigationBar: Example(),
+      // bottomNavigationBar: Example(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: "Reports".text.xl3.black.make(),
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: "Reports".text.xl3.black.make(),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          centerTitle: true,
-        ),
-        body: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ConsultancyReport(),
-              ),
-            );
-          },
-          child: "Add Report".text.xl3.black.make(),
-        ));
+        elevation: 0.0,
+        centerTitle: true,
+      ),
+      body: Container(
+        height: 200,
+        child: ListView.builder(
+            itemCount: allConsultancyReports.length,
+            itemBuilder: (BuildContext context, int index) {
+              int count = index + 1;
+              String title = "Consultancy-" + count.toString();
+              return ListTile(
+                onTap: () {},
+                leading: Text(title),
+              ).pOnly(bottom: 20);
+            }),
+      ).p12(),
+    );
   }
 }
+
+
+
+      //  body: ElevatedButton(
+      //     onPressed: () {
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //           builder: (context) => ConsultancyReport(),
+      //         ),
+      //       );
+      //     },
+      //     child: "Add Report".text.xl3.black.make(),
+      //   )

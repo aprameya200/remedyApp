@@ -1,7 +1,9 @@
 // ignore_for_file: dead_code, prefer_const_constructors
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:remedy_app/pages/auth.dart';
@@ -33,6 +35,17 @@ import 'data/patient-data.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: "basic",
+          channelName: 'basic',
+          channelDescription: 'basic',
+          importance: NotificationImportance.High,
+        )
+      ],
+      debug: true);
   await Firebase.initializeApp();
 
   /************************************************************************************************ */

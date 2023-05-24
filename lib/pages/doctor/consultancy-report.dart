@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
 import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:remedy_app/widgets/notifications.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -467,6 +468,19 @@ class _PrescriptionsState extends State<Prescriptions> {
                                                 ),
                                                 TextButton(
                                                     onPressed: () {
+                                                      FillNotification fill =
+                                                          FillNotification(
+                                                              medicine_name:
+                                                                  medinineNameController
+                                                                      .text,
+                                                              userID:
+                                                                  "ludenstrky@gmail.com",
+                                                              times_per_day:
+                                                                  timesPerDayController
+                                                                      .text);
+
+                                                      fill.setNotification();
+
                                                       String count =
                                                           "Medicine-" +
                                                               prescriptionCount

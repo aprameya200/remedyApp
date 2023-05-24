@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:remedy_app/widgets/notifications.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -129,6 +130,8 @@ class _MessagePageState extends State<MessagePage> with WidgetsBindingObserver {
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
                             onTap: () {
+                              NotificationAPI.trigger_notification();
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

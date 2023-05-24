@@ -13,6 +13,7 @@ import 'package:remedy_app/pages/sign-up_page.dart';
 //Calander
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../widgets/notifications.dart';
 import '../../widgets/themes.dart';
 
 class MedicniePage extends StatefulWidget {
@@ -25,20 +26,51 @@ class MedicniePage extends StatefulWidget {
 }
 
 class _MedicniePageState extends State<MedicniePage> {
+  List allMedicine = [];
+
+  @override
+  void initState() {
+    loadNotifications();
+  }
+
+  Future loadNotifications() async {
+    FeedNotification notifications = FeedNotification();
+    await notifications.getNotifications();
+
+    setState(() {
+      allMedicine = notifications.allMedicine;
+    });
+
+    // print(allMedicine.length);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // bottomNavigationBar: Example(),
+      // bottomNavigationBar: Example(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: "Medicines".text.xl3.black.make(),
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: "Medicines".text.xl3.black.make(),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          centerTitle: true,
-        ),
-        body: Container(
-          child: Text("No Presciption",
-              style: TextStyle(color: Colors.black54, fontSize: 40)),
-        ).p16());
+        elevation: 0.0,
+        centerTitle: true,
+      ),
+      body: Container(
+        height: 200,
+        child: ListView.builder(
+            itemCount: allMedicine.length,
+            itemBuilder: (BuildContext context, int index) {
+              int count = index + 1;
+              String title = count.toString();
+
+              return ListTile(
+                leading: Text(title),
+                title: Text(allMedicine[index]["name"]),
+                subtitle: Text(
+                    allMedicine[index]["times-per-day"] + " Times per day"),
+              ).pOnly(bottom: 20);
+            }),
+      ).p12(),
+    );
   }
 }

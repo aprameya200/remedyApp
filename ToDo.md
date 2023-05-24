@@ -56,9 +56,12 @@ experience
 Todo
 1. Update doctor dashboard after new booking
 2. Need to add doctor name to appoinnmtne table dynamically
-3. Reviews table is needted to load doctor safely -- can be done later
-4. Add picture of patient, update of doctor -- can be done later
-5. Meet link -- can be done later
+3. Notification
+4. Payment
+5. EHR milaune kam cha
+6. Reviews table is needted to load doctor safely -- can be done later
+7. Add picture of patient, update of doctor -- can be done later
+8. Meet link -- can be done later
 
 
 #######################
