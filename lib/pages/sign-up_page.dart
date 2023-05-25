@@ -159,6 +159,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                             color: Color.fromARGB(
                                                 51, 34, 26, 26)))),
                                 child: TextFormField(
+                                  obscureText: true,
                                   controller: passwordController,
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
@@ -209,6 +210,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                 padding: EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   controller: confirmPasswordController,
+                                  obscureText: true,
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   validator: (confirmPassword) =>
@@ -234,7 +236,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 40,
                         ),
                         Material(
                           color: Color(0xff57C5B6),
@@ -267,25 +269,9 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                         SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            LineDivider(),
-                            "Or".text.lg.make(),
-                            LineDivider()
-                          ],
-                        ),
+
                         SizedBox(
-                          height: 20,
-                        ),
-                        SocialLoginButton(
-                          backgroundColor: MyThemes.googleButton,
-                          buttonType: SocialLoginButtonType.google,
-                          onPressed: () {},
-                          text: "Sign Up With Google",
-                        ),
-                        SizedBox(
-                          height: 20,
+                          height: 50,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

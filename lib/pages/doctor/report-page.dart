@@ -16,6 +16,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../widgets/get-reports.dart';
 import '../../widgets/themes.dart';
+import 'ehr-doctor-display.dart';
 
 class ReportPage extends StatefulWidget {
   final dummy;
@@ -60,33 +61,43 @@ class _ReportPageState extends State<ReportPage> {
         elevation: 0.0,
         centerTitle: true,
       ),
-      body: Container(
-        height: 200,
-        child: ListView.builder(
-            itemCount: allConsultancyReports.length,
-            itemBuilder: (BuildContext context, int index) {
-              int count = index + 1;
-              String title = "Consultancy-" + count.toString();
-              return ListTile(
-                onTap: () {},
-                leading: Text(title),
-              ).pOnly(bottom: 20);
-            }),
-      ).p12(),
+      body: Column(
+        children: [
+          Container(
+            height: 200,
+            child: ListView.builder(
+                itemCount: allConsultancyReports.length,
+                itemBuilder: (BuildContext context, int index) {
+                  int count = index + 1;
+                  String title = "Consultancy-" + count.toString();
+                  return ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EletronicHealthRecordForDoctor(
+                            patientEmail: 'ludenstrky@gmail.com',
+                          ),
+                        ),
+                      );
+                    },
+                    leading: Text(title),
+                  ).pOnly(bottom: 20);
+                }),
+          ).p12(),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConsultancyReport(),
+                ),
+              );
+            },
+            child: "Add Report".text.xl3.black.make(),
+          )
+        ],
+      ),
     );
   }
 }
-
-
-
-      //  body: ElevatedButton(
-      //     onPressed: () {
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => ConsultancyReport(),
-      //         ),
-      //       );
-      //     },
-      //     child: "Add Report".text.xl3.black.make(),
-      //   )

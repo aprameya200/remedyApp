@@ -30,7 +30,7 @@ import 'package:remedy_app/utils/routes.dart';
 import 'package:remedy_app/widgets/themes.dart';
 import 'package:remedy_app/widgets/utils.dart';
 import 'dart:ui' as ui;
-
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'data/patient-data.dart';
 
 Future main() async {
@@ -46,6 +46,7 @@ Future main() async {
         )
       ],
       debug: true);
+
   await Firebase.initializeApp();
 
   /************************************************************************************************ */
