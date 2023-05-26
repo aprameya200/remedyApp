@@ -66,7 +66,7 @@ class _ConsultancyReportState extends State<ConsultancyReport> {
                   padding: EdgeInsets.all(15.0),
                   child: Column(
                     children: [
-                      "Consultance Report"
+                      "Consultation Report"
                           .text
                           .xl4
                           .color(MyThemes.textColor)
